@@ -8,10 +8,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.learningandroid.omegarecords.domain.*;
+import com.learningandroid.omegarecords.utils.GsonParser;
 import com.learningandroid.omegarecords.utils.UserAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,51 +27,38 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class ViewUsersActivity extends AppCompatActivity {
+public class ViewUsersActivity extends NavigationPane {
 
     private static final String URL = "https://jsonplaceholder.typicode.com/users";
-    private User[] users = null;
     private static final OkHttpClient CLIENT = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_users);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        try {
-            fetchData();
-            updateUI();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void updateUI() throws InterruptedException {
-        while (users == null) {
-            Thread.sleep(50);
-        }
-
+        onCreateDrawer(findViewById(R.id.drawer_layout));
+        fetchData();
         fillData();
-        findViewById(R.id.view_user_fetch_data).setVisibility(View.GONE);
-        findViewById(R.id.view_user_fetch_progress).setVisibility(View.GONE);
-        findViewById(R.id.view_user_cancel_button).setVisibility(View.GONE);
-        findViewById(R.id.view_user_list).setVisibility(View.VISIBLE);
     }
 
     private void fillData() {
+        while (users == null) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         RecyclerView recyclerView = findViewById(R.id.view_user_list);
-        UserAdapter userAdapter = new UserAdapter(this, users);
+        UserAdapter userAdapter = new UserAdapter(this, users, me);
         recyclerView.setAdapter(userAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void fetchData() {
-        Request request = new Request.Builder().url(URL).build();
+        if (users != null) { return; }
 
+        Request request = new Request.Builder().url(URL).build();
         CLIENT.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {

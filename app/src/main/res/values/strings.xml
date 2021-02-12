@@ -4,8 +4,16 @@
     <string name="view_user_details_label">User Details</string>
     <string name="edit_profile_label">Edit Profile</string>
 
+    <!-- for app info -->
+    <string name="app_info_description">Omega Records allows companies to manage their employee
+        records effectively. It includes the following features. </string>
+    <string name="feature_one">use google sign in</string>
+    <string name="feature_two">view employee list</string>
+    <string name="feature_three">view employee details</string>
+    <string name="feature_four">edit profile</string>
+
     <!-- for sign in activity -->
-    <string name="sign_in_status_signed_out">Signed Out</string>
+    <string name="sign_in_status">Sign in to Continue</string>
     <string name="sign_in_app_logo">Logo Image</string>
     <string name="sign_in_view_list_button">View Users</string>
     <string name="sign_in_profile_button">Edit Profile</string>
@@ -39,7 +47,12 @@
 
     <!-- for edit profile activity -->
     <string name="save_profile_button">Save Profile</string>
-
+    <string name="profile_address_street">Street</string>
+    <string name="profile_address_suite">Suite</string>
+    <string name="profile_address_city">City</string>
+    <string name="profile_address_zipcode">Zipcode</string>
+    <string name="profile_geo_lat">Latitude</string>
+    <string name="profile_geo_lng">Longitude</string>
 
     <!-- for header and navigation pane -->
     <string name="header_logo">Logo Image</string>

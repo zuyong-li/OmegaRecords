@@ -2,7 +2,6 @@ package com.learningandroid.omegarecords.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.learningandroid.omegarecords.NavigationPane;
 import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.ViewUserDetailsActivity;
 import com.learningandroid.omegarecords.domain.User;
@@ -25,10 +25,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     Context context;
     User[] users;
+    User me;
 
-    public UserAdapter(Context context, User[] users) {
+    public UserAdapter(Context context, User[] users, User me) {
         this.context = context;
         this.users = users;
+        this.me = me;
     }
 
     @NonNull
@@ -40,24 +42,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        String name = users[position].getName();
-        holder.name.setText(name);
-        holder.email.setText(users[position].getEmail());
-        Picasso.get().load(URL + name).into(holder.photo);
+        User userBinded = (position < users.length) ? users[position] : me;
+        holder.name.setText(userBinded.getName());
+        holder.email.setText(userBinded.getEmail());
+        Picasso.get().load(URL + userBinded.getName()).into(holder.photo);
 
         holder.userListRow.setOnClickListener((View view) -> {
             Intent viewUserDetailsIntent = new Intent(context, ViewUserDetailsActivity.class);
-            String userJsonString = GsonParser.getGsonParser().toJson(users[position]);
-            Bundle args = new Bundle();
-            args.putString("user_details", userJsonString);
-            viewUserDetailsIntent.putExtra("user", args);
+            viewUserDetailsIntent.putExtra("user_position", position);
             context.startActivity(viewUserDetailsIntent);
         });
     }
 
     @Override
     public int getItemCount() {
-        return users.length;
+        return users.length + 1;
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {

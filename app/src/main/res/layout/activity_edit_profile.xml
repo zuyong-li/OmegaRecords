@@ -55,7 +55,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/profie_user_phone"
+                    android:id="@+id/profile_user_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autofillHints=""
@@ -73,8 +73,8 @@
                     android:ems="10"
                     android:hint="@string/user_details_email"
                     android:inputType="text|textEmailAddress"
-                    app:layout_constraintStart_toStartOf="@+id/profie_user_phone"
-                    app:layout_constraintTop_toBottomOf="@+id/profie_user_phone" />
+                    app:layout_constraintStart_toStartOf="@+id/profile_user_phone"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_user_phone" />
 
                 <EditText
                     android:id="@+id/profile_user_website"
@@ -119,40 +119,80 @@
                     app:srcCompat="@drawable/address" />
 
                 <EditText
-                    android:id="@+id/profile_address_street_and_suite"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/profile_address_street"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="20dp"
                     android:autofillHints=""
                     android:ems="10"
-                    android:hint="@string/user_details_address_street_and_suite"
+                    android:hint="@string/profile_address_street"
                     android:inputType="text"
                     app:layout_constraintStart_toEndOf="@+id/profile_address_photo"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/profile_address_geo"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/profile_address_suite"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"
                     android:autofillHints=""
                     android:ems="10"
-                    android:hint="@string/user_details_address_geo"
+                    android:hint="@string/profile_address_suite"
                     android:inputType="text"
-                    app:layout_constraintStart_toStartOf="@+id/profile_address_city_and_zipcode"
-                    app:layout_constraintTop_toBottomOf="@+id/profile_address_city_and_zipcode" />
+                    app:layout_constraintStart_toEndOf="@+id/profile_address_street"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
-                    android:id="@+id/profile_address_city_and_zipcode"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/profile_geo_lat"
+                    android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:autofillHints=""
                     android:ems="10"
-                    android:hint="@string/user_details_address_city_and_zipcode"
+                    android:hint="@string/profile_geo_lat"
                     android:inputType="text"
-                    app:layout_constraintStart_toStartOf="@+id/profile_address_street_and_suite"
-                    app:layout_constraintTop_toBottomOf="@+id/profile_address_street_and_suite" />
+                    app:layout_constraintStart_toStartOf="@+id/profile_address_city"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_address_city" />
+
+                <EditText
+                    android:id="@+id/profile_address_city"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/profile_address_city"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="@+id/profile_address_street"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_address_street" />
+
+                <EditText
+                    android:id="@+id/profile_address_zipcode"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/profile_address_zipcode"
+                    android:inputType="text"
+                    app:layout_constraintStart_toEndOf="@+id/profile_address_city"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_address_suite" />
+
+                <EditText
+                    android:id="@+id/profile_geo_lng"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/profile_geo_lng"
+                    android:inputType="text"
+                    app:layout_constraintStart_toEndOf="@+id/profile_geo_lat"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_address_zipcode" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>

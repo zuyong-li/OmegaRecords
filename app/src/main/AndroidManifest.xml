@@ -11,18 +11,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OmegaRecords">
+        <activity android:name=".AppInfoActivity" />
         <activity
             android:name=".EditProfileActivity"
-            android:label="@string/edit_profile_label"
-            android:parentActivityName=".SignInActivity"/>
+            android:label="@string/edit_profile_label" />
         <activity
             android:name=".ViewUserDetailsActivity"
             android:label="@string/view_user_details_label"
             android:parentActivityName=".ViewUsersActivity" />
         <activity
             android:name=".ViewUsersActivity"
-            android:label="@string/view_user_label"
-            android:parentActivityName=".SignInActivity" />
+            android:label="@string/view_user_label" />
         <activity android:name=".SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
