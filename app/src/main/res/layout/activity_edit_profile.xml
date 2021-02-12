@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C7CAAA"
+    tools:context=".EditProfileActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/edit_profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profile_personal_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/profile_user_photo"
+                    android:layout_width="160dp"
+                    android:layout_height="160dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:contentDescription="@string/user_details_photo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/profile" />
+
+                <EditText
+                    android:id="@+id/profile_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_name"
+                    android:inputType="textPersonName"
+                    app:layout_constraintStart_toEndOf="@+id/profile_user_photo"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/profie_user_phone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_phone"
+                    android:inputType="phone"
+                    app:layout_constraintStart_toStartOf="@+id/profile_user_name"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_user_name" />
+
+                <EditText
+                    android:id="@+id/profile_user_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_email"
+                    android:inputType="text|textEmailAddress"
+                    app:layout_constraintStart_toStartOf="@+id/profie_user_phone"
+                    app:layout_constraintTop_toBottomOf="@+id/profie_user_phone" />
+
+                <EditText
+                    android:id="@+id/profile_user_website"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_website"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="@+id/profile_user_email"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_user_email" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profile_address_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_personal_info">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/profile_address_photo"
+                    android:layout_width="160dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:contentDescription="@string/user_details_address_photo"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/address" />
+
+                <EditText
+                    android:id="@+id/profile_address_street_and_suite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_address_street_and_suite"
+                    android:inputType="text"
+                    app:layout_constraintStart_toEndOf="@+id/profile_address_photo"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/profile_address_geo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_address_geo"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="@+id/profile_address_city_and_zipcode"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_address_city_and_zipcode" />
+
+                <EditText
+                    android:id="@+id/profile_address_city_and_zipcode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_address_city_and_zipcode"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="@+id/profile_address_street_and_suite"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_address_street_and_suite" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profile_company_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_address_info">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/profile_com_photo"
+                    android:layout_width="160dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:contentDescription="@string/user_details_com_name"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/company" />
+
+                <EditText
+                    android:id="@+id/profile_com_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="20dp"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_com_name"
+                    android:inputType="text"
+                    app:layout_constraintStart_toEndOf="@+id/profile_com_photo"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
+                    android:id="@+id/profile_com_catch_phrase"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_com_catch_phrase"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="@+id/profile_com_name"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_com_name" />
+
+                <EditText
+                    android:id="@+id/profile_com_business"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autofillHints=""
+                    android:ems="10"
+                    android:hint="@string/user_details_com_business"
+                    android:inputType="text"
+                    app:layout_constraintStart_toStartOf="@+id/profile_com_catch_phrase"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_com_catch_phrase" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/profile_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
+            android:text="@string/save_profile_button"
+            app:backgroundTint="#585C31"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <include layout="@layout/navigation_pane"/>
+</androidx.drawerlayout.widget.DrawerLayout>

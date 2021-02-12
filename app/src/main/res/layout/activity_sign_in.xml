@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_in_main_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C7CAAA"
+    tools:context=".SignInActivity">
+
+
+    <ImageView
+        android:id="@+id/sign_in_logo"
+        android:layout_width="180dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@string/sign_in_app_logo"
+        android:src="@drawable/logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/sign_in_app_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/alike_angular"
+        android:gravity="center"
+        android:text="@string/app_name"
+        android:textColor="#F44336"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_logo" />
+
+    <TextView
+        android:id="@+id/sign_in_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/sign_in_status_signed_out"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_app_name" />
+
+    <Button
+        android:id="@+id/view_user_list_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/sign_in_view_list_button"
+        android:visibility="visible"
+        app:backgroundTint="#585C31"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_status" />
+
+    <Button
+        android:id="@+id/edit_profile_button"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:text="@string/sign_in_profile_button"
+        android:visibility="visible"
+        app:backgroundTint="#585C31"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sign_in_status" />
+
+
+    <RelativeLayout
+        android:id="@+id/sign_in_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="480dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/sign_out_and_disconnect"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <Button
+                android:id="@+id/sign_out_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sign_out_button"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/disconnect_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/disconnect_button" />
+        </LinearLayout>
+    </RelativeLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

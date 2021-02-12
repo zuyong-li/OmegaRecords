@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/view_users"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#C7CAAA"
+    tools:context=".ViewUsersActivity">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/view_user_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <TextView
+        android:id="@+id/view_user_fetch_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:fontFamily="cursive"
+        android:text="@string/view_user_fetch_users"
+        android:textColor="#606151"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/view_user_fetch_progress"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:indeterminate="true"
+        android:indeterminateBehavior="cycle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view_user_fetch_data"
+        app:layout_constraintVertical_bias="0.067" />
+
+    <Button
+        android:id="@+id/view_user_cancel_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:text="@string/view_user_cancel_fetching"
+        app:backgroundTint="#585C31"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

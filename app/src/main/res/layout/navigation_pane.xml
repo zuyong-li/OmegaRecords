@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.navigation.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_pane"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:headerLayout="@layout/header"
+    app:menu="@menu/drawermenu"
+    android:fitsSystemWindows="true"
+    android:layout_gravity="start"
+    tools:context=".NavigationPane" />
+

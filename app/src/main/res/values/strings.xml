@@ -1,0 +1,56 @@
+<resources>
+    <string name="app_name">Omega Records</string>
+    <string name="view_user_label">User List</string>
+    <string name="view_user_details_label">User Details</string>
+    <string name="edit_profile_label">Edit Profile</string>
+
+    <!-- for sign in activity -->
+    <string name="sign_in_status_signed_out">Signed Out</string>
+    <string name="sign_in_app_logo">Logo Image</string>
+    <string name="sign_in_view_list_button">View Users</string>
+    <string name="sign_in_profile_button">Edit Profile</string>
+    <string name="sign_out_button">Sign Out</string>
+    <string name="disconnect_button">Disconnect</string>
+    <string name="signed_in_fmt">Signed in as: %s</string>
+
+    <!-- for view users activity -->
+    <string name="view_user_fetch_users">Fetching User Data</string>
+    <string name="view_user_cancel_fetching">Cancel</string>
+    <string name="view_user_name">Name</string>
+    <string name="view_user_email">Email</string>
+    <string name="view_user_image">Photo</string>
+
+    <!-- for view user details activity-->
+    <string name="user_details_photo">User Photo</string>
+    <string name="user_details_name">User Name</string>
+    <string name="user_details_phone">Phone Number</string>
+    <string name="user_details_email">Email</string>
+    <string name="user_details_website">Website</string>
+
+    <string name="user_details_address_photo">Address Image</string>
+    <string name="user_details_address_street_and_suite">Street, Suite</string>
+    <string name="user_details_address_city_and_zipcode">City, Zipcode</string>
+    <string name="user_details_address_geo">Latitude, Longitude</string>
+
+    <string name="user_details_com_photo">Company Image</string>
+    <string name="user_details_com_name">Company name</string>
+    <string name="user_details_com_catch_phrase">Company Catch Phrase</string>
+    <string name="user_details_com_business">Company Business</string>
+
+    <!-- for edit profile activity -->
+    <string name="save_profile_button">Save Profile</string>
+
+
+    <!-- for header and navigation pane -->
+    <string name="header_logo">Logo Image</string>
+    <string name="header_name">Name</string>
+    <string name="header_email">Email</string>
+    <string name="log_out">Log Out</string>
+    <string name="setting">Setting</string>
+    <string name="app_info">Info</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <!-- google sign in client id -->
+    <string name="server_client_id">892876350039-or0ij423u2ocltn24vpq0chikb6injuh.apps.googleusercontent.com</string>
+</resources>
