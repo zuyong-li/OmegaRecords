@@ -3,15 +3,17 @@
     package="com.learningandroid.omegarecords">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
-        android:allowBackup="true"
+        android:name=".App"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OmegaRecords">
-        <activity android:name=".AppInfoActivity" />
+        <activity android:name=".AppInfoActivity"
+            android:label="@string/app_info"/>
         <activity
             android:name=".EditProfileActivity"
             android:label="@string/edit_profile_label" />

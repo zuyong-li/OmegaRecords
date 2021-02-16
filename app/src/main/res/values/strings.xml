@@ -31,7 +31,7 @@
     <!-- for view user details activity-->
     <string name="user_details_photo">User Photo</string>
     <string name="user_details_name">User Name</string>
-    <string name="user_details_phone">Phone Number</string>
+    <string name="user_details_phone">Phone No.</string>
     <string name="user_details_email">Email</string>
     <string name="user_details_website">Website</string>
 

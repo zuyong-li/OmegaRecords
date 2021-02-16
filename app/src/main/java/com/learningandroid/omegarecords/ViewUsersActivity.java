@@ -1,20 +1,14 @@
 package com.learningandroid.omegarecords;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.learningandroid.omegarecords.domain.*;
-import com.learningandroid.omegarecords.utils.GsonParser;
 import com.learningandroid.omegarecords.utils.UserAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +44,7 @@ public class ViewUsersActivity extends NavigationPane {
             }
         }
         RecyclerView recyclerView = findViewById(R.id.view_user_list);
-        UserAdapter userAdapter = new UserAdapter(this, users, me);
+        UserAdapter userAdapter = new UserAdapter(this, users, me, selfPortrait);
         recyclerView.setAdapter(userAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }

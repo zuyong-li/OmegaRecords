@@ -3,6 +3,5 @@
     <item android:id="@+id/app_info" android:title="@string/app_info"/>
     <item android:id="@+id/edit_profile" android:title="@string/edit_profile_label"/>
     <item android:id="@+id/view_users" android:title="@string/view_user_label"/>
-    <item android:id="@+id/setting" android:title="@string/setting" />
     <item android:id="@+id/logout" android:title="@string/log_out"/>
 </menu>

@@ -1,9 +1,6 @@
 package com.learningandroid.omegarecords;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -14,7 +11,6 @@ import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
 import com.learningandroid.omegarecords.domain.User;
-import com.learningandroid.omegarecords.utils.GsonParser;
 import com.squareup.picasso.Picasso;
 
 public class ViewUserDetailsActivity extends NavigationPane {
@@ -57,7 +53,11 @@ public class ViewUserDetailsActivity extends NavigationPane {
                 ((TextView) findViewById(R.id.user_details_email)).setText(user.getEmail());
                 ((TextView) findViewById(R.id.user_details_website)).setText(user.getWebsite());
                 ImageView userDetailsPhoto = findViewById(R.id.user_details_photo);
-                Picasso.get().load(USER_URL + user.getName()).into(userDetailsPhoto);
+                if(position >= users.length && selfPortrait != null) {
+                    userDetailsPhoto.setImageBitmap(selfPortrait);
+                } else {
+                    Picasso.get().load(USER_URL + user.getName()).into(userDetailsPhoto);
+                }
 
                 // set up the address info card view
                 Address address = user.getAddress();
