@@ -1,31 +1,19 @@
 package com.learningandroid.omegarecords;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.learningandroid.omegarecords.utils.GsonParser;
-
+/**
+ * purpose of this activity is to display general information of this app
+ * after user login, this activity will show up
+ */
 public class AppInfoActivity extends NavigationPane {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_info);
-        updateAccount();
-        onCreateDrawer(findViewById(R.id.drawer_layout));
-    }
 
-    private void updateAccount() {
-        if (account != null) { return; }
-        if(getIntent().hasExtra("account")) {
-            Bundle args = getIntent().getBundleExtra("account");
-            String accountJson = args.getString("sign_in_account");
-            account = GsonParser.getGsonParser().fromJson(accountJson, GoogleSignInAccount.class);
-            me.setName(account.getDisplayName());
-            me.setEmail(account.getEmail());
-        } else {
-            Toast.makeText(this, "No Data", Toast.LENGTH_LONG).show();
-        }
+        // create and setup the menu
+        onCreateDrawer(findViewById(R.id.drawer_layout));
     }
 }

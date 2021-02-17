@@ -1,6 +1,7 @@
 package com.learningandroid.omegarecords;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -13,6 +14,12 @@ import com.learningandroid.omegarecords.domain.Geography;
 import com.learningandroid.omegarecords.domain.User;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
+
+/**
+ * this activity displays the user detail
+ * if the user is ME and ME.address/company are not set, redirect to EditProfileActivity
+ */
 public class ViewUserDetailsActivity extends NavigationPane {
 
     private int position = -1;
@@ -29,6 +36,9 @@ public class ViewUserDetailsActivity extends NavigationPane {
         setData();
     }
 
+    /**
+     * Extract the index of user in USERS array whose detail is going to displayed
+     */
     private void fetchData() {
         if(!getIntent().hasExtra("user_position")) {
             Toast.makeText(this, "No Data", Toast.LENGTH_LONG).show();
@@ -37,6 +47,11 @@ public class ViewUserDetailsActivity extends NavigationPane {
         }
     }
 
+    /**
+     * setup the layout to display user details
+     * if position >= USERS.length, then the detail of ME will be displayed
+     * if Me.address/company are not set, redirect to EditProfileActivity
+     */
     private void setData() {
         User user = null;
         if (position > -1 && position < users.length) {
@@ -53,8 +68,9 @@ public class ViewUserDetailsActivity extends NavigationPane {
                 ((TextView) findViewById(R.id.user_details_email)).setText(user.getEmail());
                 ((TextView) findViewById(R.id.user_details_website)).setText(user.getWebsite());
                 ImageView userDetailsPhoto = findViewById(R.id.user_details_photo);
-                if(position >= users.length && selfPortrait != null) {
-                    userDetailsPhoto.setImageBitmap(selfPortrait);
+                if(position >= users.length && me.getSelfPortraitPath() != null) {
+                    File file = new File(me.getSelfPortraitPath());
+                    userDetailsPhoto.setImageURI(Uri.fromFile(file));
                 } else {
                     Picasso.get().load(USER_URL + user.getName()).into(userDetailsPhoto);
                 }

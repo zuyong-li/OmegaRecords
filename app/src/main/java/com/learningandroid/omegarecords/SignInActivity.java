@@ -15,13 +15,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-import com.learningandroid.omegarecords.utils.GsonParser;
 
+/**
+ * SignInActivity allows end users to sign in this app using their Gmail accounts
+ * When logged out, this activity will also show up to allow the end user to sign in again
+ */
 public class SignInActivity extends AppCompatActivity{
 
-    private static final String TAG = "SignInActivity";
     private static final int SIGN_IN = 9001;
-
     GoogleSignInClient googleSignInClient;
 
     @Override
@@ -29,10 +30,12 @@ public class SignInActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        // create a google signin client which provides signin intent later
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail().build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
+        // if this intent is accompanied with message sign out, sign out current account
         if(getIntent().hasExtra("sign_out")) {
             googleSignInClient.signOut();
             Toast.makeText(this, "successfully logged out!", Toast.LENGTH_SHORT).show();
@@ -56,21 +59,25 @@ public class SignInActivity extends AppCompatActivity{
         updateUI(account);
     }
 
+    /**
+     * update the user interface once this activity is started
+     * first update ME in navigationPane, then start the AppInfoActivity
+     */
     private void updateUI(GoogleSignInAccount account) {
         if (account != null) {
-            // if sign in succeeded, passing account info to app_info activity
+            NavigationPane.updateAccount(account);
+
             Intent appInfoIntent = new Intent(this, AppInfoActivity.class);
-            String accountJson = GsonParser.getGsonParser().toJson(account);
-            Bundle args = new Bundle();
-            args.putString("sign_in_account", accountJson);
-            appInfoIntent.putExtra("account", args);
             startActivity(appInfoIntent);
         } else if (!(getIntent().hasExtra("sign_out"))) {
-            // if sign in failed, display a message
             Toast.makeText(this, "sign in failed, please try again", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * handles the result of signin activity
+     * if the end user successfully signed in, invoke updateUI to redirect to AppInfoActivity
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
