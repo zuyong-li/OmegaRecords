@@ -19,6 +19,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.navigation.NavigationView;
 import com.learningandroid.omegarecords.domain.Me;
 import com.learningandroid.omegarecords.domain.User;
+import com.learningandroid.omegarecords.fragment.SettingsFragment;
+import com.learningandroid.omegarecords.service.BackgroundMusic;
 import com.learningandroid.omegarecords.utils.GsonParser;
 
 import java.io.BufferedReader;
@@ -41,6 +43,7 @@ public class NavigationPane extends AppCompatActivity {
     static User[] users;
     static Me me = new Me();
     static String fileName;
+    public static Boolean IS_BACKGROUND_MUSIC_ON = false;
     private final String USER_KEY = "USERS", ME_KEY = "ME", SELF_PORTRAIT_KEY = "PORTRAIT";
 
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -124,6 +127,11 @@ public class NavigationPane extends AppCompatActivity {
                     Intent viewUsersIntent = new Intent(this, ViewUsersActivity.class);
                     startActivity(viewUsersIntent);
                     break;
+                case R.id.settings:
+                    getSupportFragmentManager().beginTransaction()
+                            .add(R.id.setting_fragment_container, new SettingsFragment(IS_BACKGROUND_MUSIC_ON), null)
+                            .commit();
+                    break;
                 case R.id.logout:
                     Intent signOutIntent = new Intent(this, SignInActivity.class);
                     signOutIntent.putExtra("sign_out", true);
@@ -182,8 +190,6 @@ public class NavigationPane extends AppCompatActivity {
         try{
             fileOutputStream = openFileOutput(fileName, MODE_PRIVATE);
             fileOutputStream.write(text.getBytes());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -213,8 +219,6 @@ public class NavigationPane extends AppCompatActivity {
                 sb.append(line).append("\n");
             }
             me = GsonParser.getGsonParser().fromJson(sb.toString(), Me.class);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

@@ -4,10 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <uses-feature android:name="android.hardware.camera"
-        android:required="true"/>
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <application
         android:name=".App"
@@ -16,8 +17,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OmegaRecords">
-        <activity android:name=".AppInfoActivity"
-            android:label="@string/app_info"/>
+        <service
+            android:name=".service.BackgroundMusic"
+            android:enabled="true" />
+
+        <activity
+            android:name=".AppInfoActivity"
+            android:label="@string/app_info" />
         <activity
             android:name=".EditProfileActivity"
             android:label="@string/edit_profile_label" />
