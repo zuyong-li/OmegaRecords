@@ -12,6 +12,7 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -40,11 +41,11 @@ import static com.learningandroid.omegarecords.App.CHANNEL_ID;
  */
 public class NavigationPane extends AppCompatActivity {
 
-    static User[] users;
+    User[] users;
     static Me me = new Me();
-    static String fileName;
+    String fileName;
     public static Boolean IS_BACKGROUND_MUSIC_ON = false;
-    private final String USER_KEY = "USERS", ME_KEY = "ME", SELF_PORTRAIT_KEY = "PORTRAIT";
+    private final String USER_KEY = "USERS", ME_KEY = "ME";
 
     ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -128,6 +129,7 @@ public class NavigationPane extends AppCompatActivity {
                     startActivity(viewUsersIntent);
                     break;
                 case R.id.settings:
+                    Log.d("Background music", String.valueOf(IS_BACKGROUND_MUSIC_ON));
                     getSupportFragmentManager().beginTransaction()
                             .add(R.id.setting_fragment_container, new SettingsFragment(IS_BACKGROUND_MUSIC_ON), null)
                             .commit();
@@ -177,7 +179,6 @@ public class NavigationPane extends AppCompatActivity {
     public static void updateAccount(@NonNull  GoogleSignInAccount account) {
         me.setName(account.getDisplayName());
         me.setEmail(account.getEmail());
-        fileName = account.getEmail() + ".txt";
     }
 
     /**
@@ -186,6 +187,9 @@ public class NavigationPane extends AppCompatActivity {
      */
     protected void saveMe() {
         String text = GsonParser.getGsonParser().toJson(me);
+        if (fileName == null) {
+            fileName = me.getEmail() + ".txt";
+        }
         FileOutputStream fileOutputStream = null;
         try{
             fileOutputStream = openFileOutput(fileName, MODE_PRIVATE);
@@ -209,6 +213,9 @@ public class NavigationPane extends AppCompatActivity {
      */
     protected void loadMe() {
         FileInputStream fileInputStream = null;
+        if (fileName == null) {
+            fileName = me.getEmail() + ".txt";
+        }
         try {
             fileInputStream = openFileInput(fileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream));

@@ -38,7 +38,7 @@ public class SignInActivity extends AppCompatActivity{
         // if this intent is accompanied with message sign out, sign out current account
         if(getIntent().hasExtra("sign_out")) {
             googleSignInClient.signOut();
-            Toast.makeText(this, "successfully logged out!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "successfully logged out!", Toast.LENGTH_SHORT).show();
         }
 
         SignInButton signInButton = findViewById(R.id.sign_in_button);
@@ -69,8 +69,6 @@ public class SignInActivity extends AppCompatActivity{
 
             Intent appInfoIntent = new Intent(this, AppInfoActivity.class);
             startActivity(appInfoIntent);
-        } else if (!(getIntent().hasExtra("sign_out"))) {
-            Toast.makeText(this, "sign in failed, please try again", Toast.LENGTH_SHORT).show();
         }
     }
 
