@@ -11,7 +11,9 @@ import android.widget.Toast;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
+import com.learningandroid.omegarecords.domain.LoggedInUser;
 import com.learningandroid.omegarecords.domain.User;
+import com.learningandroid.omegarecords.utils.GsonParser;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -22,7 +24,7 @@ import java.io.File;
  */
 public class ViewUserDetailsActivity extends NavigationPane {
 
-    private int position = -1;
+    private User user = null;
     private static final String USER_URL = "https://robohash.org/";
     private static final String ADDRESS_URL = "https://picsum.photos/200/200?random=";
     private static final String COM_URL = "https://source.unsplash.com/random/200x200?sig=";
@@ -40,25 +42,19 @@ public class ViewUserDetailsActivity extends NavigationPane {
      * Extract the index of user in USERS array whose detail is going to displayed
      */
     private void fetchData() {
-        if(!getIntent().hasExtra("user_position")) {
-            Toast.makeText(this, "No Data", Toast.LENGTH_LONG).show();
-        } else {
-            position = getIntent().getIntExtra("user_position", users.length);
+        if(getIntent().hasExtra("user_details")) {
+            user = GsonParser.getGsonParser().fromJson(getIntent().getStringExtra("user_details"), User.class);
+        } else if(getIntent().hasExtra("logged_in_user_details")){
+            user = GsonParser.getGsonParser().fromJson(getIntent().getStringExtra("logged_in_user_details"), LoggedInUser.class);
         }
     }
 
     /**
      * setup the layout to display user details
      * if position >= USERS.length, then the detail of ME will be displayed
-     * if Me.address/company are not set, redirect to EditProfileActivity
+     * if LoggedInUser.address/company are not set, redirect to EditProfileActivity
      */
     private void setData() {
-        User user = null;
-        if (position > -1 && position < users.length) {
-            user = users[position];
-        } else if (position >= users.length) {
-            user = me;
-        }
         if (user != null) {
             // find the user and the user has detailed information to show
             if (user.getAddress() != null && user.getCompany() != null) {
@@ -68,8 +64,8 @@ public class ViewUserDetailsActivity extends NavigationPane {
                 ((TextView) findViewById(R.id.user_details_email)).setText(user.getEmail());
                 ((TextView) findViewById(R.id.user_details_website)).setText(user.getWebsite());
                 ImageView userDetailsPhoto = findViewById(R.id.user_details_photo);
-                if(position >= users.length && me.getSelfPortraitPath() != null) {
-                    File file = new File(me.getSelfPortraitPath());
+                if(user instanceof LoggedInUser && LOGGED_IN_USER.getSelfPortraitPath() != null) {
+                    File file = new File(LOGGED_IN_USER.getSelfPortraitPath());
                     userDetailsPhoto.setImageURI(Uri.fromFile(file));
                 } else {
                     Picasso.get().load(USER_URL + user.getName()).into(userDetailsPhoto);

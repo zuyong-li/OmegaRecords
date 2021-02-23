@@ -74,11 +74,11 @@ public class EditProfileActivity extends NavigationPane {
      * extract data from ME and fill in the layout
      */
     private void setData() {
-        ((TextView) findViewById(R.id.profile_user_username)).setText(me.getName());
-        setDataHelper(R.id.profile_user_phone, me.getPhone());
-        setDataHelper(R.id.profile_user_website, me.getWebsite());
+        ((TextView) findViewById(R.id.profile_user_username)).setText(LOGGED_IN_USER.getName());
+        setDataHelper(R.id.profile_user_phone, LOGGED_IN_USER.getPhone());
+        setDataHelper(R.id.profile_user_website, LOGGED_IN_USER.getWebsite());
 
-        Address addr = me.getAddress();
+        Address addr = LOGGED_IN_USER.getAddress();
         if(addr != null) {
             setDataHelper(R.id.profile_address_street, addr.getStreet());
             setDataHelper(R.id.profile_address_suite, addr.getSuite());
@@ -92,15 +92,15 @@ public class EditProfileActivity extends NavigationPane {
             }
         }
 
-        Company company = me.getCompany();
+        Company company = LOGGED_IN_USER.getCompany();
         if(company != null) {
             setDataHelper(R.id.profile_com_name, company.getName());
             setDataHelper(R.id.profile_com_catch_phrase, company.getCatchPhrase());
             setDataHelper(R.id.profile_com_business, company.getBs());
         }
 
-        if (me.getSelfPortraitPath() != null) {
-            File file = new File(me.getSelfPortraitPath());
+        if (LOGGED_IN_USER.getSelfPortraitPath() != null) {
+            File file = new File(LOGGED_IN_USER.getSelfPortraitPath());
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
         } else {
             Toast.makeText(this, "no saved photo", Toast.LENGTH_SHORT).show();
@@ -121,16 +121,16 @@ public class EditProfileActivity extends NavigationPane {
         geo.setLat(((EditText) findViewById(R.id.profile_geo_lat)).getText().toString());
         geo.setLng(((EditText) findViewById(R.id.profile_geo_lng)).getText().toString());
         address.setGeo(geo);
-        me.setAddress(address);
+        LOGGED_IN_USER.setAddress(address);
 
         Company company = new Company();
         company.setName(((EditText) findViewById(R.id.profile_com_name)).getText().toString());
         company.setCatchPhrase(((EditText) findViewById(R.id.profile_com_catch_phrase)).getText().toString());
         company.setBs(((EditText) findViewById(R.id.profile_com_business)).getText().toString());
-        me.setCompany(company);
+        LOGGED_IN_USER.setCompany(company);
 
-        me.setPhone(((EditText) findViewById(R.id.profile_user_phone)).getText().toString());
-        me.setWebsite(((EditText) findViewById(R.id.profile_user_website)).getText().toString());
+        LOGGED_IN_USER.setPhone(((EditText) findViewById(R.id.profile_user_phone)).getText().toString());
+        LOGGED_IN_USER.setWebsite(((EditText) findViewById(R.id.profile_user_website)).getText().toString());
 
         saveMe();
     }
@@ -179,7 +179,7 @@ public class EditProfileActivity extends NavigationPane {
 
         //createTempFile(prefix, suffix, directory)
         File image = File.createTempFile(imageFileName,".jpg", storageDir);
-        me.setSelfPortraitPath(image.getAbsolutePath());
+        LOGGED_IN_USER.setSelfPortraitPath(image.getAbsolutePath());
         return image;
     }
 
@@ -211,14 +211,14 @@ public class EditProfileActivity extends NavigationPane {
 
     /**
      * handle activity result, specifically for camera activity invoked by dispatchTakePictureIntent()
-     * if the activity succeeds, me.selfPortraitPath has to be correctly set
+     * if the activity succeeds, LOGGED_IN_USER.selfPortraitPath has to be correctly set
      * then display the profile image captured by the camera
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            File file = new File(me.getSelfPortraitPath());
+            File file = new File(LOGGED_IN_USER.getSelfPortraitPath());
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
         }
     }

@@ -6,9 +6,10 @@ import android.app.NotificationManager;
 import android.os.Build;
 
 /**
- * the purpose of this class is to create notification channels
+ * it is a singleton class with the following functionality
+ * it creates the notification channels
  */
-public class App extends Application {
+public class OmegaRecordsApp extends Application {
     public static final String CHANNEL_ID = "ORChannel";
 
     @Override

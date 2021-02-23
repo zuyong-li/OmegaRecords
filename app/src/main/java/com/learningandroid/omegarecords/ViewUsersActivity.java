@@ -15,6 +15,8 @@ import com.learningandroid.omegarecords.utils.UserAdapter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 import okhttp3.Call;
@@ -24,13 +26,15 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * this activity displays a RecycerView of USERS array and ME
+ * this activity displays a RecycerView of USERS array and the logged in user
  * if the Cardivew is clicked, redirect to the corresponding user details
  */
 public class ViewUsersActivity extends NavigationPane {
 
     private static final String URL = "https://jsonplaceholder.typicode.com/users";
     private static final OkHttpClient CLIENT = new OkHttpClient();
+    UserAdapter userAdapter;
+    ArrayList<User> userList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,7 @@ public class ViewUsersActivity extends NavigationPane {
 
         // create and setup the menu
         onCreateDrawer(findViewById(R.id.drawer_layout));
+        setData();
         fetchData();
     }
 
@@ -48,7 +53,11 @@ public class ViewUsersActivity extends NavigationPane {
      */
     private void setData() {
         RecyclerView recyclerView = findViewById(R.id.view_user_list);
-        UserAdapter userAdapter = new UserAdapter(this, users, me);
+        userList.add(LOGGED_IN_USER);
+        if(users != null) {
+            userList.addAll(Arrays.asList(users));
+        }
+        userAdapter = new UserAdapter(this, userList);
         recyclerView.setAdapter(userAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -59,7 +68,6 @@ public class ViewUsersActivity extends NavigationPane {
      */
     private void fetchData() {
         if (users != null) {
-            setData();
             return;
         }
 
@@ -79,7 +87,8 @@ public class ViewUsersActivity extends NavigationPane {
                 ViewUsersActivity.this.runOnUiThread(() -> {
                     progressDialog.cancel();
                     if(response.isSuccessful()) {
-                        setData();
+                        userList.addAll(Arrays.asList(users));
+                        userAdapter.notifyDataSetChanged();
                     }
                 });
             }

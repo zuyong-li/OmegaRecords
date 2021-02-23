@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -23,6 +22,7 @@ import com.google.android.gms.tasks.Task;
 public class SignInActivity extends AppCompatActivity{
 
     private static final int SIGN_IN = 9001;
+    public static final String ACCOUNT_KEY = "accountKey";
     GoogleSignInClient googleSignInClient;
 
     @Override
@@ -38,7 +38,6 @@ public class SignInActivity extends AppCompatActivity{
         // if this intent is accompanied with message sign out, sign out current account
         if(getIntent().hasExtra("sign_out")) {
             googleSignInClient.signOut();
-            //Toast.makeText(this, "successfully logged out!", Toast.LENGTH_SHORT).show();
         }
 
         SignInButton signInButton = findViewById(R.id.sign_in_button);

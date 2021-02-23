@@ -14,27 +14,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.ViewUserDetailsActivity;
-import com.learningandroid.omegarecords.domain.Me;
+import com.learningandroid.omegarecords.domain.LoggedInUser;
 import com.learningandroid.omegarecords.domain.User;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
- * user adapter for fill recycler view with users list and me
+ * user adapter for fill recycler view with users list and loggedInUser
  */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     private static final String URL = "https://robohash.org/";
 
     Context context;
-    User[] users;
-    Me me;
+    ArrayList<User> users;
 
-    public UserAdapter(Context context, User[] users, Me me) {
+    public UserAdapter(Context context, ArrayList<User> users) {
         this.context = context;
         this.users = users;
-        this.me = me;
     }
 
     @NonNull
@@ -45,18 +44,17 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * if the user is me, position will be equal to users.length
+     * if the user is loggedInUser, position will be equal to users.length
      * otherwise, position is the index of the USERS array
      */
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        User user = (position < users.length) ? users[position] : me;
+        User user = users.get(position);
         holder.name.setText(user.getName());
         holder.email.setText(user.getEmail());
 
-        if (position >= users.length && me.getSelfPortraitPath() != null) {
-            // the user is me and selfPortrait image has been set
-            File file = new File(me.getSelfPortraitPath());
+        if(user instanceof LoggedInUser && ((LoggedInUser) user).getSelfPortraitPath() != null){
+            File file = new File(((LoggedInUser) user).getSelfPortraitPath());
             holder.photo.setImageURI(Uri.fromFile(file));
         } else {
             Picasso.get().load(URL + user.getName()).into(holder.photo);
@@ -64,12 +62,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     /**
-     * recycler view displays users and me, to item count = users.length + 1
+     * recycler view displays users and loggedInUser, to item count = users.length + 1
      */
     @Override
     public int getItemCount() {
-        return users.length + 1;
+        return users.size();
     }
+
 
     public class UserViewHolder extends RecyclerView.ViewHolder {
 
@@ -84,8 +83,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
             itemView.findViewById(R.id.userListRow).setOnClickListener((View view) -> {
                 Intent viewUserDetailsIntent = new Intent(context, ViewUserDetailsActivity.class);
-                // send position as a qualifier to indicate if the user is me
-                viewUserDetailsIntent.putExtra("user_position", getAdapterPosition());
+
+                User user = users.get(getAdapterPosition());
+                if(user instanceof LoggedInUser){
+                    viewUserDetailsIntent.putExtra("logged_in_user_details", GsonParser.getGsonParser().toJson(user));
+                } else {
+                    viewUserDetailsIntent.putExtra("user_details", GsonParser.getGsonParser().toJson(user));
+                }
                 context.startActivity(viewUserDetailsIntent);
             });
         }
