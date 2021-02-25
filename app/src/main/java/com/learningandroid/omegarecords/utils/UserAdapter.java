@@ -86,9 +86,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
                 User user = users.get(getAdapterPosition());
                 if(user instanceof LoggedInUser){
-                    viewUserDetailsIntent.putExtra("logged_in_user_details", GsonParser.getGsonParser().toJson(user));
+                    viewUserDetailsIntent.putExtra("logged_in_user_details", ActivityUtils.getGsonParser().toJson(user));
                 } else {
-                    viewUserDetailsIntent.putExtra("user_details", GsonParser.getGsonParser().toJson(user));
+                    viewUserDetailsIntent.putExtra("user_details", ActivityUtils.getGsonParser().toJson(user));
                 }
                 context.startActivity(viewUserDetailsIntent);
             });

@@ -1,7 +1,6 @@
 package com.learningandroid.omegarecords;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,15 +13,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.learningandroid.omegarecords.domain.Settings;
+import com.learningandroid.omegarecords.service.BackgroundMusic;
+import com.learningandroid.omegarecords.utils.ActivityUtils;
 
 /**
  * SignInActivity allows end users to sign in this app using their Gmail accounts
  * When logged out, this activity will also show up to allow the end user to sign in again
  */
-public class SignInActivity extends AppCompatActivity{
+public class SignInActivity extends NavigationPane{
 
     private static final int SIGN_IN = 9001;
-    public static final String ACCOUNT_KEY = "accountKey";
     GoogleSignInClient googleSignInClient;
 
     @Override
@@ -35,8 +36,11 @@ public class SignInActivity extends AppCompatActivity{
                 .requestEmail().build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // if this intent is accompanied with message sign out, sign out current account
+        // if this intent is accompanied with message sign out,
+        // stop background music, then sign out current account
         if(getIntent().hasExtra("sign_out")) {
+            Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
+            stopService(backgroundMusicIntent);
             googleSignInClient.signOut();
         }
 
@@ -60,11 +64,18 @@ public class SignInActivity extends AppCompatActivity{
 
     /**
      * update the user interface once this activity is started
-     * first update ME in navigationPane, then start the AppInfoActivity
+     * first check the background music setting and turn it on if true
+     * then start an AppInfoActivity
      */
     private void updateUI(GoogleSignInAccount account) {
         if (account != null) {
-            NavigationPane.updateAccount(account);
+            // check whether the background music should be on
+            ActivityUtils<Settings> utils = new ActivityUtils<>();
+            String fileName = account.getEmail() + ".settings.txt";
+            if(utils.loadData(this, fileName, new Settings()).getBackgroundMusicOn()) {
+                Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
+                startService(backgroundMusicIntent);
+            }
 
             Intent appInfoIntent = new Intent(this, AppInfoActivity.class);
             startActivity(appInfoIntent);

@@ -35,6 +35,7 @@ public class ViewUsersActivity extends NavigationPane {
     private static final OkHttpClient CLIENT = new OkHttpClient();
     UserAdapter userAdapter;
     ArrayList<User> userList = new ArrayList<>();
+    User[] users;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class ViewUsersActivity extends NavigationPane {
      */
     private void setData() {
         RecyclerView recyclerView = findViewById(R.id.view_user_list);
-        userList.add(LOGGED_IN_USER);
+        userList.add(loadLoggedInUser());
         if(users != null) {
             userList.addAll(Arrays.asList(users));
         }

@@ -25,6 +25,8 @@ import androidx.core.content.FileProvider;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
+import com.learningandroid.omegarecords.domain.LoggedInUser;
+import com.learningandroid.omegarecords.utils.ActivityUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +42,8 @@ public class EditProfileActivity extends NavigationPane {
 
     public static final int CAMERA_PERMISSION_CODE = 101;
     public static final int CAMERA_REQUEST_CODE = 102;
+    public static final String USER_KEY = "loggedInUser";
+    LoggedInUser loggedInUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,12 @@ public class EditProfileActivity extends NavigationPane {
 
         // create and setup the menu
         onCreateDrawer(findViewById(R.id.drawer_layout));
+
+        if(savedInstanceState == null) {
+            loggedInUser = loadLoggedInUser();
+        } else {
+            loggedInUser = ActivityUtils.getGsonParser().fromJson(savedInstanceState.getString(USER_KEY), LoggedInUser.class);
+        }
 
         setData();
         findViewById(R.id.profile_save_button).setOnClickListener(this::saveData);
@@ -61,6 +71,14 @@ public class EditProfileActivity extends NavigationPane {
         });
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        String loggedInUserJson = ActivityUtils.getGsonParser().toJson(loggedInUser);
+        outState.putString(USER_KEY, loggedInUserJson);
+    }
+
     /**
      * a helper method to set the text field with TEXT of a EditText identified by ID
      */
@@ -71,14 +89,14 @@ public class EditProfileActivity extends NavigationPane {
     }
 
     /**
-     * extract data from ME and fill in the layout
+     * extract data from the loggedInUser and fill in the layout
      */
     private void setData() {
-        ((TextView) findViewById(R.id.profile_user_username)).setText(LOGGED_IN_USER.getName());
-        setDataHelper(R.id.profile_user_phone, LOGGED_IN_USER.getPhone());
-        setDataHelper(R.id.profile_user_website, LOGGED_IN_USER.getWebsite());
+        ((TextView) findViewById(R.id.profile_user_username)).setText(loggedInUser.getName());
+        setDataHelper(R.id.profile_user_phone, loggedInUser.getPhone());
+        setDataHelper(R.id.profile_user_website, loggedInUser.getWebsite());
 
-        Address addr = LOGGED_IN_USER.getAddress();
+        Address addr = loggedInUser.getAddress();
         if(addr != null) {
             setDataHelper(R.id.profile_address_street, addr.getStreet());
             setDataHelper(R.id.profile_address_suite, addr.getSuite());
@@ -92,15 +110,15 @@ public class EditProfileActivity extends NavigationPane {
             }
         }
 
-        Company company = LOGGED_IN_USER.getCompany();
+        Company company = loggedInUser.getCompany();
         if(company != null) {
             setDataHelper(R.id.profile_com_name, company.getName());
             setDataHelper(R.id.profile_com_catch_phrase, company.getCatchPhrase());
             setDataHelper(R.id.profile_com_business, company.getBs());
         }
 
-        if (LOGGED_IN_USER.getSelfPortraitPath() != null) {
-            File file = new File(LOGGED_IN_USER.getSelfPortraitPath());
+        if (loggedInUser.getSelfPortraitPath() != null) {
+            File file = new File(loggedInUser.getSelfPortraitPath());
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
         } else {
             Toast.makeText(this, "no saved photo", Toast.LENGTH_SHORT).show();
@@ -121,18 +139,20 @@ public class EditProfileActivity extends NavigationPane {
         geo.setLat(((EditText) findViewById(R.id.profile_geo_lat)).getText().toString());
         geo.setLng(((EditText) findViewById(R.id.profile_geo_lng)).getText().toString());
         address.setGeo(geo);
-        LOGGED_IN_USER.setAddress(address);
+        loggedInUser.setAddress(address);
 
         Company company = new Company();
         company.setName(((EditText) findViewById(R.id.profile_com_name)).getText().toString());
         company.setCatchPhrase(((EditText) findViewById(R.id.profile_com_catch_phrase)).getText().toString());
         company.setBs(((EditText) findViewById(R.id.profile_com_business)).getText().toString());
-        LOGGED_IN_USER.setCompany(company);
+        loggedInUser.setCompany(company);
 
-        LOGGED_IN_USER.setPhone(((EditText) findViewById(R.id.profile_user_phone)).getText().toString());
-        LOGGED_IN_USER.setWebsite(((EditText) findViewById(R.id.profile_user_website)).getText().toString());
+        loggedInUser.setPhone(((EditText) findViewById(R.id.profile_user_phone)).getText().toString());
+        loggedInUser.setWebsite(((EditText) findViewById(R.id.profile_user_website)).getText().toString());
 
-        saveMe();
+        String userText = ActivityUtils.getGsonParser().toJson(loggedInUser);
+        String fileName = account.getEmail() + ".txt";
+        ActivityUtils.saveData(this, userText, fileName);
     }
 
     /**
@@ -179,7 +199,7 @@ public class EditProfileActivity extends NavigationPane {
 
         //createTempFile(prefix, suffix, directory)
         File image = File.createTempFile(imageFileName,".jpg", storageDir);
-        LOGGED_IN_USER.setSelfPortraitPath(image.getAbsolutePath());
+        loggedInUser.setSelfPortraitPath(image.getAbsolutePath());
         return image;
     }
 
@@ -218,7 +238,7 @@ public class EditProfileActivity extends NavigationPane {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            File file = new File(LOGGED_IN_USER.getSelfPortraitPath());
+            File file = new File(loggedInUser.getSelfPortraitPath());
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
         }
     }

@@ -14,11 +14,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 
-import com.learningandroid.omegarecords.NavigationPane;
 import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.Settings;
 import com.learningandroid.omegarecords.service.BackgroundMusic;
-import com.learningandroid.omegarecords.utils.GsonParser;
+import com.learningandroid.omegarecords.utils.ActivityUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,24 +26,23 @@ import org.jetbrains.annotations.NotNull;
  */
 public class SettingsFragment extends Fragment {
 
-    private Settings settings;
     private final String SETTING_KEY = "settingsKey";
+    private final String FILENAME_KEY = "fileName";
+
+    private Settings settings;
+    private String fileName;
 
     public SettingsFragment() { }
-    public SettingsFragment(Settings settings) {
+    public SettingsFragment(Settings settings, String fileName) {
         this.settings = settings;
+        this.fileName = fileName;
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        String settinsJson = GsonParser.getGsonParser().toJson(settings);
-        outState.putString(SETTING_KEY, settinsJson);
-    }
-
-
-    public void setMusicOn(Boolean isMusicON) {
-        settings.setBackgroundMusicOn(isMusicON);
-        NavigationPane.setSettings(settings);
+        String settingsJson = ActivityUtils.getGsonParser().toJson(settings);
+        outState.putString(SETTING_KEY, settingsJson);
+        outState.putString(FILENAME_KEY, fileName);
     }
 
     @Override
@@ -52,7 +50,8 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         if(savedInstanceState != null) {
             String settingsString = savedInstanceState.getString(SETTING_KEY);
-            settings = GsonParser.getGsonParser().fromJson(settingsString, Settings.class);
+            settings = ActivityUtils.getGsonParser().fromJson(settingsString, Settings.class);
+            fileName = savedInstanceState.getString(FILENAME_KEY);
         }
 
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
@@ -64,18 +63,18 @@ public class SettingsFragment extends Fragment {
             if(isChecked) { // turn on background music
                 Intent backgroundMusicIntent = new Intent(getContext(), BackgroundMusic.class);
                 requireActivity().startService(backgroundMusicIntent);
-                setMusicOn(true);
+                settings.setBackgroundMusicOn(true);
                 Log.d("background music", "start background music");
             } else { // turn off background music
                 Intent backgroundMusicIntent = new Intent(getContext(), BackgroundMusic.class);
                 requireActivity().stopService(backgroundMusicIntent);
-                setMusicOn(false);
+                settings.setBackgroundMusicOn(false);
                 Log.d("background music", "stop background music");
             }
         });
 
-        // apply changes, it has no effects on the settings
-        // it simply remove the setting fragment when OK button is clicked
+        // apply changes, it saves the setting details to internal storage
+        // it also removes the setting fragment when OK button is clicked
         Button applySettings = view.findViewById(R.id.setting_applay);
         applySettings.setOnClickListener((View v) ->{
             Log.d("setting apply", "apply button is clicked");
@@ -88,4 +87,12 @@ public class SettingsFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onStop() {
+        String settingsText = ActivityUtils.getGsonParser().toJson(settings);
+        ActivityUtils.saveData(requireContext(), settingsText, fileName);
+        super.onStop();
+    }
+
 }

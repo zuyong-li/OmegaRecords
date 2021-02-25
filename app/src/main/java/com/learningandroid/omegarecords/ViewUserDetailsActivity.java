@@ -13,7 +13,7 @@ import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
 import com.learningandroid.omegarecords.domain.LoggedInUser;
 import com.learningandroid.omegarecords.domain.User;
-import com.learningandroid.omegarecords.utils.GsonParser;
+import com.learningandroid.omegarecords.utils.ActivityUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -43,9 +43,9 @@ public class ViewUserDetailsActivity extends NavigationPane {
      */
     private void fetchData() {
         if(getIntent().hasExtra("user_details")) {
-            user = GsonParser.getGsonParser().fromJson(getIntent().getStringExtra("user_details"), User.class);
+            user = ActivityUtils.getGsonParser().fromJson(getIntent().getStringExtra("user_details"), User.class);
         } else if(getIntent().hasExtra("logged_in_user_details")){
-            user = GsonParser.getGsonParser().fromJson(getIntent().getStringExtra("logged_in_user_details"), LoggedInUser.class);
+            user = ActivityUtils.getGsonParser().fromJson(getIntent().getStringExtra("logged_in_user_details"), LoggedInUser.class);
         }
     }
 
@@ -64,8 +64,8 @@ public class ViewUserDetailsActivity extends NavigationPane {
                 ((TextView) findViewById(R.id.user_details_email)).setText(user.getEmail());
                 ((TextView) findViewById(R.id.user_details_website)).setText(user.getWebsite());
                 ImageView userDetailsPhoto = findViewById(R.id.user_details_photo);
-                if(user instanceof LoggedInUser && LOGGED_IN_USER.getSelfPortraitPath() != null) {
-                    File file = new File(LOGGED_IN_USER.getSelfPortraitPath());
+                if(user instanceof LoggedInUser && ((LoggedInUser) user).getSelfPortraitPath() != null) {
+                    File file = new File(((LoggedInUser) user).getSelfPortraitPath());
                     userDetailsPhoto.setImageURI(Uri.fromFile(file));
                 } else {
                     Picasso.get().load(USER_URL + user.getName()).into(userDetailsPhoto);

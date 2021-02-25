@@ -12,23 +12,18 @@ import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.navigation.NavigationView;
 import com.learningandroid.omegarecords.domain.LoggedInUser;
 import com.learningandroid.omegarecords.domain.Settings;
-import com.learningandroid.omegarecords.domain.User;
 import com.learningandroid.omegarecords.fragment.SettingsFragment;
-import com.learningandroid.omegarecords.utils.GsonParser;
+import com.learningandroid.omegarecords.utils.ActivityUtils;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 import java.util.Objects;
 
 import static com.learningandroid.omegarecords.OmegaRecordsApp.CHANNEL_ID;
@@ -40,68 +35,13 @@ import static com.learningandroid.omegarecords.OmegaRecordsApp.CHANNEL_ID;
  */
 public class NavigationPane extends AppCompatActivity {
 
-    public static final LoggedInUser LOGGED_IN_USER = new LoggedInUser();
-    public static final Settings SETTINGS = new Settings();
-
-    User[] users;
-    private final String USER_KEY = "USERS", ME_KEY = "ME", SETTING_KEY = "BKGNDMUSIC";
-
+    GoogleSignInAccount account;
     ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // if savedInstanceState is not null, the onRestoreInstanceState will keep the layout consistent of rotation
-        // if savedInstanceState is null, load information of ME from internal storage
-        if(savedInstanceState == null) {
-            loadMe();
-        }
-    }
-
-    public static void setSettings(Settings settings) {
-        SETTINGS.setBackgroundMusicOn(settings.getBackgroundMusicOn());
-    }
-
-    public static void setLoggedInUser(LoggedInUser loggedInUser) {
-        LOGGED_IN_USER.setSelfPortraitPath(loggedInUser.getSelfPortraitPath());
-        LOGGED_IN_USER.setAddress(loggedInUser.getAddress());
-        LOGGED_IN_USER.setCompany(loggedInUser.getCompany());
-        LOGGED_IN_USER.setPhone(loggedInUser.getPhone());
-        LOGGED_IN_USER.setWebsite(loggedInUser.getWebsite());
-    }
-
-    /**
-     * save useful information, USERS array and ME
-     */
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        String usersJson = GsonParser.getGsonParser().toJson(users);
-        outState.putString(USER_KEY, usersJson);
-
-        String meJson = GsonParser.getGsonParser().toJson(LOGGED_IN_USER);
-        outState.putString(ME_KEY, meJson);
-
-        String settingsJson = GsonParser.getGsonParser().toJson(SETTINGS);
-        outState.putString(SETTING_KEY, settingsJson);
-    }
-
-    /**
-     * restore useful information, USERS array and ME
-     */
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        users = GsonParser.getGsonParser().fromJson(savedInstanceState.getString(USER_KEY), User[].class);
-
-        LoggedInUser loggedInUser= GsonParser.getGsonParser().fromJson(savedInstanceState.getString(ME_KEY), LoggedInUser.class);
-        NavigationPane.setLoggedInUser(loggedInUser);
-
-        Settings settings = GsonParser.getGsonParser().fromJson(savedInstanceState.getString(SETTING_KEY), Settings.class);
-        NavigationPane.setSettings(settings);
+        account = GoogleSignIn.getLastSignedInAccount(this);
     }
 
     @Override
@@ -127,10 +67,12 @@ public class NavigationPane extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
         // set up the name and email fields in the header
-        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.header_name))
-                .setText(LOGGED_IN_USER.getName());
-        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.header_email))
-                .setText(LOGGED_IN_USER.getEmail());
+        if(account != null) {
+            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.header_name))
+                    .setText(account.getDisplayName());
+            ((TextView) navigationView.getHeaderView(0).findViewById(R.id.header_email))
+                    .setText(account.getEmail());
+        }
 
         // link corresponding activities to each menu option
         navigationView.setNavigationItemSelectedListener(menuItem -> {
@@ -151,8 +93,11 @@ public class NavigationPane extends AppCompatActivity {
                     startActivity(viewUsersIntent);
                     break;
                 case R.id.settings:
+                    String fileName = account.getEmail() + ".settings.txt";
+                    ActivityUtils<Settings> utils = new ActivityUtils<>();
+                    Settings settings = utils.loadData(this, fileName, new Settings());
                     getSupportFragmentManager().beginTransaction()
-                            .add(R.id.setting_fragment_container, new SettingsFragment(NavigationPane.SETTINGS), null)
+                            .add(R.id.setting_fragment_container, new SettingsFragment(settings, fileName), null)
                             .commit();
                     break;
                 case R.id.logout:
@@ -191,71 +136,20 @@ public class NavigationPane extends AppCompatActivity {
         manager.notify(1, builder.build());
     }
 
-    /**
-     * update the account
-     * this method is called immediately after the end user successfully logged in
-     * all other activities except the SignInActivity requires a menu
-     * and the menu requires name and email address
-     */
-    public static void updateAccount(@NonNull GoogleSignInAccount account) {
-        LOGGED_IN_USER.setName(account.getDisplayName());
-        LOGGED_IN_USER.setEmail(account.getEmail());
-    }
 
     /**
-     * save information of ME in internal storage
-     * specifically when end user finish editing his/her profile
+     * load the information of the loggedInUser
+     * if there is no saved data, create an new LoggedInUser Object with only name and email
      */
-    protected void saveMe() {
-        String text = GsonParser.getGsonParser().toJson(LOGGED_IN_USER);
-        String fileName = LOGGED_IN_USER.getEmail() + ".txt";
-
-        FileOutputStream fileOutputStream = null;
-        try{
-            fileOutputStream = openFileOutput(fileName, MODE_PRIVATE);
-            fileOutputStream.write(text.getBytes());
-        } catch (IOException e) {
-            Log.d("Save me", "file not found");
-        } finally {
-            if(fileOutputStream != null) {
-                try {
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    /**
-     * load information of ME from internal storage
-     * specifically when there is no saved instance state
-     */
-    protected void loadMe() {
-        FileInputStream fileInputStream = null;
-        String fileName = LOGGED_IN_USER.getEmail() + ".txt";
-
-        try {
-            fileInputStream = openFileInput(fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(fileInputStream));
-            StringBuilder sb = new StringBuilder();
-            String line;
-
-            while((line = br.readLine()) != null) {
-                sb.append(line).append("\n");
-            }
-            LoggedInUser loggedInUser = GsonParser.getGsonParser().fromJson(sb.toString(), LoggedInUser.class);
-            NavigationPane.setLoggedInUser(loggedInUser);
-        } catch (IOException e) {
-            Log.d("Load me", "file not found");
-        } finally {
-            if(fileInputStream != null) {
-                try {
-                    fileInputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+    public LoggedInUser loadLoggedInUser() {
+        if(account != null) {
+            ActivityUtils<LoggedInUser> utils = new ActivityUtils<>();
+            LoggedInUser user = new LoggedInUser();
+            user.setEmail(account.getEmail());
+            user.setName(account.getDisplayName());
+            return utils.loadData(this, account.getEmail() + ".txt", user);
+        } else {
+            return null;
         }
     }
 }
