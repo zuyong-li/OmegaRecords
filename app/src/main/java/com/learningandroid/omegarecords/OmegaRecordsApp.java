@@ -12,8 +12,8 @@ import android.os.Build;
 public class OmegaRecordsApp extends Application {
     public static final String REVISIT_CHANNEL_ID = "visit again";
     public static final String ALARM_CHANNEL_ID = "repeated notification";
-    public static final int REVISIT_NOTIFY_ID = 103;
-    public static final int ALARM_NOTIFY_ID = 104;
+    public static final int REVISIT_NOTIFY_ID = 100;
+    public static final int ALARM_NOTIFY_ID = 101;
 
     @Override
     public void onCreate() {

@@ -6,10 +6,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -22,6 +25,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
@@ -32,6 +37,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * allows the user to change his/her profile
@@ -40,10 +47,12 @@ import java.util.Date;
  */
 public class EditProfileActivity extends NavigationPane {
 
-    public static final int CAMERA_PERMISSION_CODE = 101;
-    public static final int CAMERA_REQUEST_CODE = 102;
+    public static final int CAMERA_PERMISSION_REQUEST_CODE = 103;
+    public static final int CAMERA_INTENT_REQUEST_CODE = 104;
+    public static final int LOCATION_PERMISSION_REQUEST_CODE = 105;
     public static final String USER_KEY = "loggedInUser";
     LoggedInUser loggedInUser;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +62,7 @@ public class EditProfileActivity extends NavigationPane {
         // create and setup the menu
         onCreateDrawer(findViewById(R.id.drawer_layout));
 
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         if(savedInstanceState == null) {
             loggedInUser = loadLoggedInUser();
         } else {
@@ -61,12 +71,24 @@ public class EditProfileActivity extends NavigationPane {
 
         setData();
         findViewById(R.id.profile_save_button).setOnClickListener(this::saveData);
+
         findViewById(R.id.profile_user_photo).setOnClickListener((View view) -> {
             if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
                     Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestCameraPermission();
+                requestPermission("Allow camera access to take a profile photo",
+                        Manifest.permission.CAMERA, CAMERA_PERMISSION_REQUEST_CODE);
             } else {
                 dispatchTakePictureIntent();
+            }
+        });
+
+        findViewById(R.id.profile_address_photo).setOnClickListener((View view) -> {
+            if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermission("Allow location access to fulfill or update address information",
+                        Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_REQUEST_CODE);
+            } else {
+                updateAddressInfo();
             }
         });
     }
@@ -156,18 +178,20 @@ public class EditProfileActivity extends NavigationPane {
     }
 
     /**
-     * a helper method to request runtime camera permission
+     * a helper method to request runtime permission
+     * message: a string to show when shouldShowRequestRationale returns true
+     * permission: the name of the permission to request
      */
-    private void requestCameraPermission() {
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+    private void requestPermission(String message, @NonNull String permission, final int request_code) {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             new AlertDialog.Builder(this)
-                    .setMessage("Allow camera access to take a profile photo.")
-                    .setPositiveButton("Allow", (dialog, which) -> ActivityCompat
-                            .requestPermissions(EditProfileActivity.this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE))
+                    .setMessage(message)
+                    .setPositiveButton("Allow", (dialog, which) ->
+                            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code))
                     .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss())
                     .create().show();
         } else {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code);
         }
     }
 
@@ -177,12 +201,20 @@ public class EditProfileActivity extends NavigationPane {
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == CAMERA_PERMISSION_CODE) {
+        if(requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
                 dispatchTakePictureIntent();
             } else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if(requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Location Permission Granted", Toast.LENGTH_SHORT).show();
+                updateAddressInfo();
+            } else {
+                Toast.makeText(this, "Location Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -225,7 +257,7 @@ public class EditProfileActivity extends NavigationPane {
                     "com.learningandroid.android.fileprovider",
                     photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE);
+            startActivityForResult(takePictureIntent, CAMERA_INTENT_REQUEST_CODE);
         }
     }
 
@@ -237,9 +269,38 @@ public class EditProfileActivity extends NavigationPane {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == CAMERA_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if(requestCode == CAMERA_INTENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             File file = new File(loggedInUser.getSelfPortraitPath());
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
         }
+    }
+
+    /**
+     * update the address information based on the current location
+     */
+    @SuppressLint("MissingPermission")
+    private void updateAddressInfo() {
+        fusedLocationProviderClient.getLastLocation()
+                .addOnSuccessListener(this, (Location location) -> {
+                    if (location != null) {
+                        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+                        try {
+                            List<android.location.Address> addresses = geocoder.getFromLocation(location.getLatitude(),
+                                    location.getLongitude(), 1);
+                            android.location.Address address = addresses.get(0);
+                            Log.d("location", address.toString());
+                            ((EditText) findViewById(R.id.profile_address_street)).setText(address.getAddressLine(0));
+                            ((EditText) findViewById(R.id.profile_address_suite)).setText(address.getAddressLine(1));
+                            ((EditText) findViewById(R.id.profile_address_city)).setText(address.getLocality());
+                            ((EditText) findViewById(R.id.profile_address_zipcode)).setText(address.getPostalCode());
+
+                            ((EditText) findViewById(R.id.profile_geo_lat)).setText(String.valueOf(address.getLatitude()));
+                            ((EditText) findViewById(R.id.profile_geo_lng)).setText(String.valueOf(address.getLongitude()));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
     }
 }
