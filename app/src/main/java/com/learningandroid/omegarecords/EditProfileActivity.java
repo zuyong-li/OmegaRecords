@@ -5,12 +5,14 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -25,8 +27,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.Task;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
@@ -53,6 +63,8 @@ public class EditProfileActivity extends NavigationPane {
     public static final String USER_KEY = "loggedInUser";
     LoggedInUser loggedInUser;
     FusedLocationProviderClient fusedLocationProviderClient;
+    LocationRequest locationRequest;
+    LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,16 +74,50 @@ public class EditProfileActivity extends NavigationPane {
         // create and setup the menu
         onCreateDrawer(findViewById(R.id.drawer_layout));
 
+        initialize(savedInstanceState);
+        setData();
+        setListeners();
+    }
+
+    /**
+     * initialize variables fusedLocationProviderClient, locationRequest and loggedInUser
+     */
+    private void initialize(Bundle savedInstanceState) {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(5000);
+        locationRequest.setFastestInterval(2000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        // after successfully updating the location, use the current location to fill out the address info
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                List<Location> locations = locationResult.getLocations();
+                Location location = locations.size() > 0 ? locations.get(0) : null;
+                if(location != null) {
+                    updateAddressInfo(location);
+                    stopLocationUpdates();
+                }
+            }
+        };
+
         if(savedInstanceState == null) {
             loggedInUser = loadLoggedInUser();
         } else {
             loggedInUser = ActivityUtils.getGsonParser().fromJson(savedInstanceState.getString(USER_KEY), LoggedInUser.class);
         }
+    }
 
-        setData();
+    /**
+     * set OnClickListeners for save button, profile and address images
+     */
+    private void setListeners() {
+        // click save button to save the user input
         findViewById(R.id.profile_save_button).setOnClickListener(this::saveData);
 
+        // click the user profile image to take photos using camera
         findViewById(R.id.profile_user_photo).setOnClickListener((View view) -> {
             if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
                     Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -82,13 +128,14 @@ public class EditProfileActivity extends NavigationPane {
             }
         });
 
+        // click the address image to allow using current location
         findViewById(R.id.profile_address_photo).setOnClickListener((View view) -> {
             if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermission("Allow location access to fulfill or update address information",
+                requestPermission("Allow location access to auto fill or update address information",
                         Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_REQUEST_CODE);
             } else {
-                updateAddressInfo();
+                checkSettingsAndUpdateAddressInfo();
             }
         });
     }
@@ -197,10 +244,10 @@ public class EditProfileActivity extends NavigationPane {
 
     /**
      * handle permission request result
-     * if the permission is granted, start a camera activity by calling dispatchTakePictureIntent()
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // if camera permission is granted, start a camera intent to set up profile image
         if(requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
@@ -209,10 +256,12 @@ public class EditProfileActivity extends NavigationPane {
                 Toast.makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
+
+        // if location permission is granted, auto fill the address info
         if(requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Location Permission Granted", Toast.LENGTH_SHORT).show();
-                updateAddressInfo();
+                checkSettingsAndUpdateAddressInfo();
             } else {
                 Toast.makeText(this, "Location Permission Denied", Toast.LENGTH_SHORT).show();
             }
@@ -276,31 +325,64 @@ public class EditProfileActivity extends NavigationPane {
     }
 
     /**
-     * update the address information based on the current location
+     * update the address information based on the given location
+     */
+    private void updateAddressInfo(@NonNull Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<android.location.Address> addresses = geocoder.getFromLocation(location.getLatitude(),
+                    location.getLongitude(), 1);
+            android.location.Address address = addresses.get(0);
+            Log.d("location", address.toString());
+            ((EditText) findViewById(R.id.profile_address_street)).
+                    setText(address.getAddressLine(0).split(",")[0]);
+            ((EditText) findViewById(R.id.profile_address_city)).setText(address.getLocality());
+            ((EditText) findViewById(R.id.profile_address_zipcode)).setText(address.getPostalCode());
+
+            ((EditText) findViewById(R.id.profile_geo_lat)).setText(String.valueOf(address.getLatitude()));
+            ((EditText) findViewById(R.id.profile_geo_lng)).setText(String.valueOf(address.getLongitude()));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * check the location settings request
+     * if the settings meet requirements, start updating location
+     * otherwise, check if is possible to resolve the requirements by updating settings
+     */
+    private void checkSettingsAndUpdateAddressInfo() {
+        LocationSettingsRequest locationSettingsRequest = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest).build();
+        SettingsClient settingsClient = LocationServices.getSettingsClient(this);
+
+        Task<LocationSettingsResponse> locationSettingsResponseTask = settingsClient.checkLocationSettings(locationSettingsRequest);
+        locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> startLocationUpdates());
+        locationSettingsResponseTask.addOnFailureListener(e -> {
+            if(e instanceof ResolvableApiException) {
+                ResolvableApiException resolvableApiException = (ResolvableApiException) e;
+                try {
+                    resolvableApiException.startResolutionForResult(EditProfileActivity.this, 1000);
+                } catch (IntentSender.SendIntentException sendIntentException) {
+                    sendIntentException.printStackTrace();
+                }
+            }
+        });
+    }
+
+    /**
+     * update the location
      */
     @SuppressLint("MissingPermission")
-    private void updateAddressInfo() {
-        fusedLocationProviderClient.getLastLocation()
-                .addOnSuccessListener(this, (Location location) -> {
-                    if (location != null) {
-                        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-                        try {
-                            List<android.location.Address> addresses = geocoder.getFromLocation(location.getLatitude(),
-                                    location.getLongitude(), 1);
-                            android.location.Address address = addresses.get(0);
-                            Log.d("location", address.toString());
-                            ((EditText) findViewById(R.id.profile_address_street)).setText(address.getAddressLine(0));
-                            ((EditText) findViewById(R.id.profile_address_suite)).setText(address.getAddressLine(1));
-                            ((EditText) findViewById(R.id.profile_address_city)).setText(address.getLocality());
-                            ((EditText) findViewById(R.id.profile_address_zipcode)).setText(address.getPostalCode());
+    private void startLocationUpdates() {
+        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+    }
 
-                            ((EditText) findViewById(R.id.profile_geo_lat)).setText(String.valueOf(address.getLatitude()));
-                            ((EditText) findViewById(R.id.profile_geo_lng)).setText(String.valueOf(address.getLongitude()));
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+    /**
+     * cancel location updates
+     */
+    private void stopLocationUpdates() {
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 }
