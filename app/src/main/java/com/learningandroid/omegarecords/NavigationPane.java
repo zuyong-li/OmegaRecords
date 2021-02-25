@@ -26,8 +26,6 @@ import com.learningandroid.omegarecords.utils.ActivityUtils;
 
 import java.util.Objects;
 
-import static com.learningandroid.omegarecords.OmegaRecordsApp.CHANNEL_ID;
-
 /**
  * this class provides the method for creating and setting the menu
  * it also stores the useful information needed for the whole app, USERS, ME, FILENAME
@@ -124,16 +122,16 @@ public class NavigationPane extends AppCompatActivity {
         super.onUserLeaveHint();
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, this.getIntent(), 0);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, OmegaRecordsApp.REVISIT_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_channel)
                 .setContentTitle("visit again")
-                .setContentText("don't forget about LOGGED_IN_USER, tap to revisit")
+                .setContentText("don't forget about me, tap to revisit")
                 .setAutoCancel(true)
                 .setContentIntent(contentIntent)
                 .setOnlyAlertOnce(true);
 
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
-        manager.notify(1, builder.build());
+        manager.notify(OmegaRecordsApp.REVISIT_NOTIFY_ID, builder.build());
     }
 
 
