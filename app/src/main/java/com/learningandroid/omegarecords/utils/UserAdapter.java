@@ -13,7 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.ViewUserDetailsActivity;
+import com.learningandroid.omegarecords.activity.ViewUserDetailsActivity;
 import com.learningandroid.omegarecords.domain.LoggedInUser;
 import com.learningandroid.omegarecords.domain.User;
 import com.squareup.picasso.Picasso;

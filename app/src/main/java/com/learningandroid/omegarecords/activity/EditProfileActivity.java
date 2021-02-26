@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords;
+package com.learningandroid.omegarecords.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -35,6 +35,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
+import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;

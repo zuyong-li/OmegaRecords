@@ -28,19 +28,19 @@
             android:enabled="true" />
 
         <activity
-            android:name=".AppInfoActivity"
+            android:name=".activity.AppInfoActivity"
             android:label="@string/app_info" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".activity.EditProfileActivity"
             android:label="@string/edit_profile_label" />
         <activity
-            android:name=".ViewUserDetailsActivity"
+            android:name=".activity.ViewUserDetailsActivity"
             android:label="@string/view_user_details_label"
-            android:parentActivityName=".ViewUsersActivity" />
+            android:parentActivityName=".activity.ViewUsersActivity" />
         <activity
-            android:name=".ViewUsersActivity"
+            android:name=".activity.ViewUsersActivity"
             android:label="@string/view_user_label" />
-        <activity android:name=".SignInActivity">
+        <activity android:name=".activity.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,6 +67,7 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
     </application>
 
 </manifest>

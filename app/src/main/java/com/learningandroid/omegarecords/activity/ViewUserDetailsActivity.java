@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords;
+package com.learningandroid.omegarecords.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -15,6 +15,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
@@ -33,7 +34,6 @@ public class ViewUserDetailsActivity extends NavigationPane implements OnMapRead
 
     private User user = null;
     private static final String USER_URL = "https://robohash.org/";
-    private static final String ADDRESS_URL = "https://picsum.photos/200/200?random=";
     private static final String COM_URL = "https://source.unsplash.com/random/200x200?sig=";
 
     @Override
@@ -87,8 +87,7 @@ public class ViewUserDetailsActivity extends NavigationPane implements OnMapRead
                 Geography geo = address.getGeo();
                 ((TextView) findViewById(R.id.user_details_address_geo))
                         .setText(String.format("%s, %s", geo.getLat(), geo.getLng()));
-//                ImageView userAddressPhoto = findViewById(R.id.user_details_address_photo);
-//                Picasso.get().load(ADDRESS_URL + user.getId()).into(userAddressPhoto);
+
                 SupportMapFragment mapFragment = SupportMapFragment.newInstance();
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.user_details_address_photo, mapFragment, null)

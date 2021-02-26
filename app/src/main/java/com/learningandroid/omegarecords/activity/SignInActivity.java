@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords;
+package com.learningandroid.omegarecords.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.Settings;
 import com.learningandroid.omegarecords.receiver.NotificationReceiver;
 import com.learningandroid.omegarecords.service.BackgroundMusic;

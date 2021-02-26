@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#C7CAAA"
     android:visibility="visible"
-    tools:context=".ViewUserDetailsActivity">
+    tools:context=".activity.ViewUserDetailsActivity">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/user_details_personal_info"

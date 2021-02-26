@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords;
+package com.learningandroid.omegarecords.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +20,8 @@ import android.widget.TextView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.navigation.NavigationView;
+import com.learningandroid.omegarecords.OmegaRecordsApp;
+import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.LoggedInUser;
 import com.learningandroid.omegarecords.domain.Settings;
 import com.learningandroid.omegarecords.fragment.SettingsFragment;
@@ -140,7 +142,6 @@ public class NavigationPane extends AppCompatActivity {
         NotificationManagerCompat manager = NotificationManagerCompat.from(this);
         manager.notify(OmegaRecordsApp.REVISIT_NOTIFY_ID, builder.build());
     }
-
 
     /**
      * load the information of the loggedInUser

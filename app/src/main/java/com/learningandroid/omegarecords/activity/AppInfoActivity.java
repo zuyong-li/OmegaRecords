@@ -1,6 +1,8 @@
-package com.learningandroid.omegarecords;
+package com.learningandroid.omegarecords.activity;
 
 import android.os.Bundle;
+
+import com.learningandroid.omegarecords.R;
 
 /**
  * purpose of this activity is to display general information of this app

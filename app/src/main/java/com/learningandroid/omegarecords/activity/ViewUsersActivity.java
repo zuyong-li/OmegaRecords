@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords;
+package com.learningandroid.omegarecords.activity;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.*;
 import com.learningandroid.omegarecords.utils.UserAdapter;
 

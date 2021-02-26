@@ -10,5 +10,5 @@
     app:menu="@menu/drawermenu"
     android:fitsSystemWindows="true"
     android:layout_gravity="start"
-    tools:context=".NavigationPane" />
+    tools:context=".activity.NavigationPane" />
 
