@@ -3,11 +3,18 @@ package com.learningandroid.omegarecords;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
 import com.learningandroid.omegarecords.domain.Geography;
@@ -22,7 +29,7 @@ import java.io.File;
  * this activity displays the user detail
  * if the user is ME and ME.address/company are not set, redirect to EditProfileActivity
  */
-public class ViewUserDetailsActivity extends NavigationPane {
+public class ViewUserDetailsActivity extends NavigationPane implements OnMapReadyCallback {
 
     private User user = null;
     private static final String USER_URL = "https://robohash.org/";
@@ -80,8 +87,13 @@ public class ViewUserDetailsActivity extends NavigationPane {
                 Geography geo = address.getGeo();
                 ((TextView) findViewById(R.id.user_details_address_geo))
                         .setText(String.format("%s, %s", geo.getLat(), geo.getLng()));
-                ImageView userAddressPhoto = findViewById(R.id.user_details_address_photo);
-                Picasso.get().load(ADDRESS_URL + user.getId()).into(userAddressPhoto);
+//                ImageView userAddressPhoto = findViewById(R.id.user_details_address_photo);
+//                Picasso.get().load(ADDRESS_URL + user.getId()).into(userAddressPhoto);
+                SupportMapFragment mapFragment = SupportMapFragment.newInstance();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.user_details_address_photo, mapFragment, null)
+                        .commit();
+                mapFragment.getMapAsync(this);
 
                 // set up the company info card view
                 Company company = user.getCompany();
@@ -103,5 +115,22 @@ public class ViewUserDetailsActivity extends NavigationPane {
         } else {
             Toast.makeText(this, "No Data", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        double lat = 38.57842, lng = -121.50257;
+        if(user != null && user.getAddress() != null && user.getAddress().getGeo() != null) {
+            Geography geo = user.getAddress().getGeo();
+            if(!TextUtils.isEmpty(geo.getLat())) {
+                lat = Double.parseDouble(geo.getLat());
+            }
+            if(!TextUtils.isEmpty(geo.getLng())) {
+                lng = Double.parseDouble(geo.getLng());
+            }
+        }
+        LatLng position = new LatLng(lat, lng);
+        googleMap.addMarker(new MarkerOptions().position(position));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
     }
 }

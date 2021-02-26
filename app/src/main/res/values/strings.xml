@@ -69,8 +69,6 @@
     <string name="setting_background_music_switch">switch</string>
     <string name="setting_apply">OK</string>
 
-    <!-- google sign in client id -->
-    <string name="server_client_id">892876350039-or0ij423u2ocltn24vpq0chikb6injuh.apps.googleusercontent.com</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>

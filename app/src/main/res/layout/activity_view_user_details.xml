@@ -27,7 +27,6 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:contentDescription="@string/user_details_photo"
@@ -41,7 +40,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
                 android:layout_marginTop="24dp"
                 android:text="@string/user_details_name"
                 android:textSize="24sp"
@@ -92,26 +90,22 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
+            <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/user_details_address_photo"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:contentDescription="@string/user_details_address_photo"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/user_details_address_street_and_suite"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
                 android:layout_marginTop="40dp"
                 android:text="@string/user_details_address_street_and_suite"
                 app:layout_constraintStart_toEndOf="@+id/user_details_address_photo"
@@ -155,7 +149,6 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:contentDescription="@string/user_details_com_photo"
@@ -169,7 +162,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
                 android:layout_marginTop="40dp"
                 android:text="@string/user_details_com_name"
                 android:textSize="18sp"

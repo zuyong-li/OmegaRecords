@@ -3,7 +3,6 @@ package com.learningandroid.omegarecords;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -57,9 +55,6 @@ import java.util.Locale;
  */
 public class EditProfileActivity extends NavigationPane {
 
-    public static final int CAMERA_PERMISSION_REQUEST_CODE = 103;
-    public static final int CAMERA_INTENT_REQUEST_CODE = 104;
-    public static final int LOCATION_PERMISSION_REQUEST_CODE = 105;
     public static final String USER_KEY = "loggedInUser";
     LoggedInUser loggedInUser;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -222,24 +217,6 @@ public class EditProfileActivity extends NavigationPane {
         String userText = ActivityUtils.getGsonParser().toJson(loggedInUser);
         String fileName = account.getEmail() + ".txt";
         ActivityUtils.saveData(this, userText, fileName);
-    }
-
-    /**
-     * a helper method to request runtime permission
-     * message: a string to show when shouldShowRequestRationale returns true
-     * permission: the name of the permission to request
-     */
-    private void requestPermission(String message, @NonNull String permission, final int request_code) {
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-            new AlertDialog.Builder(this)
-                    .setMessage(message)
-                    .setPositiveButton("Allow", (dialog, which) ->
-                            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code))
-                    .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss())
-                    .create().show();
-        } else {
-            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code);
-        }
     }
 
     /**

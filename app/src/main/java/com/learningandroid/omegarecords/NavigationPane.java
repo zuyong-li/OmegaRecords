@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +34,11 @@ import java.util.Objects;
  * it also ensures that rotation functions as expected by overriding onSaveInstanceState and onRestoreInstanceState
  */
 public class NavigationPane extends AppCompatActivity {
+
+
+    public static final int CAMERA_PERMISSION_REQUEST_CODE = 103;
+    public static final int CAMERA_INTENT_REQUEST_CODE = 104;
+    public static final int LOCATION_PERMISSION_REQUEST_CODE = 105;
 
     GoogleSignInAccount account;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -148,6 +155,24 @@ public class NavigationPane extends AppCompatActivity {
             return utils.loadData(this, account.getEmail() + ".txt", user);
         } else {
             return null;
+        }
+    }
+
+    /**
+     * a helper method to request runtime permission
+     * message: a string to show when shouldShowRequestRationale returns true
+     * permission: the name of the permission to request
+     */
+    protected void requestPermission(String message, @NonNull String permission, final int request_code) {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+            new AlertDialog.Builder(this)
+                    .setMessage(message)
+                    .setPositiveButton("Allow", (dialog, which) ->
+                            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code))
+                    .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss())
+                    .create().show();
+        } else {
+            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code);
         }
     }
 }
