@@ -12,9 +12,13 @@ import android.widget.Toast;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.OnStreetViewPanoramaReadyCallback;
+import com.google.android.gms.maps.StreetViewPanorama;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.SupportStreetViewPanoramaFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.StreetViewSource;
 import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.Address;
 import com.learningandroid.omegarecords.domain.Company;
@@ -30,7 +34,8 @@ import java.io.File;
  * this activity displays the user detail
  * if the user is ME and ME.address/company are not set, redirect to EditProfileActivity
  */
-public class ViewUserDetailsActivity extends NavigationPane implements OnMapReadyCallback {
+public class ViewUserDetailsActivity extends NavigationPane
+        implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
     private User user = null;
     private static final String USER_URL = "https://robohash.org/";
@@ -116,9 +121,8 @@ public class ViewUserDetailsActivity extends NavigationPane implements OnMapRead
         }
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        double lat = 38.57842, lng = -121.50257;
+    private LatLng getLocation() {
+        double lat = 38.578874, lng = -121.502319;
         if(user != null && user.getAddress() != null && user.getAddress().getGeo() != null) {
             Geography geo = user.getAddress().getGeo();
             if(!TextUtils.isEmpty(geo.getLat())) {
@@ -128,8 +132,32 @@ public class ViewUserDetailsActivity extends NavigationPane implements OnMapRead
                 lng = Double.parseDouble(geo.getLng());
             }
         }
-        LatLng position = new LatLng(lat, lng);
+        return new LatLng(lat, lng);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        LatLng position = this.getLocation();
         googleMap.addMarker(new MarkerOptions().position(position));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 15));
+
+        Toast.makeText(this, "click on address info for street view", Toast.LENGTH_SHORT).show();
+        findViewById(R.id.user_details_address_info).setOnClickListener(v -> {
+            SupportStreetViewPanoramaFragment supportStreetViewPanoramaFragment = SupportStreetViewPanoramaFragment.newInstance();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.street_view_fragment, supportStreetViewPanoramaFragment, null)
+                    .commit();
+            supportStreetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
+        });
+    }
+
+    @Override
+    public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
+        LatLng position = this.getLocation();
+        streetViewPanorama.setPosition(position, StreetViewSource.OUTDOOR);
+        streetViewPanorama.setStreetNamesEnabled(true);
+        streetViewPanorama.setPanningGesturesEnabled(true);
+        streetViewPanorama.setZoomGesturesEnabled(true);
+        streetViewPanorama.setUserNavigationEnabled(true);
     }
 }
