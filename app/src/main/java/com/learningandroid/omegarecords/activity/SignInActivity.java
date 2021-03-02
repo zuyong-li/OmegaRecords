@@ -6,10 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -61,6 +63,11 @@ public class SignInActivity extends AppCompatActivity {
             Intent signInIntent = googleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, SIGN_IN);
         });
+
+        Uri uri = getIntent().getData();
+        if(uri != null) {
+            Toast.makeText(this, "launched from url: " + uri.toString(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
