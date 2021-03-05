@@ -15,6 +15,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -185,8 +186,10 @@ public class NavigationPane extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if(airplaneModeReceiver != null) {
+        try {
             unregisterReceiver(airplaneModeReceiver);
+        } catch (Exception e) {
+            Log.d("unregister receiver", e.getMessage());
         }
     }
 }

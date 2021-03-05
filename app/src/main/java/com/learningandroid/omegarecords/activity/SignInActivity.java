@@ -2,9 +2,13 @@ package com.learningandroid.omegarecords.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlarmManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,10 +24,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.learningandroid.omegarecords.OmegaRecordsApp;
 import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.Settings;
 import com.learningandroid.omegarecords.receiver.NotificationReceiver;
 import com.learningandroid.omegarecords.service.BackgroundMusic;
+import com.learningandroid.omegarecords.service.TimerService;
 import com.learningandroid.omegarecords.utils.ActivityUtils;
 
 /**
@@ -48,12 +54,19 @@ public class SignInActivity extends AppCompatActivity {
 
         // if this intent is accompanied with message sign out,
         // stop background music, then sign out current account
-        // it also cancels the repeating notifications
+        // it cancels the repeating notifications and timer
+        // it removes all the notifications
         if(getIntent().hasExtra("sign_out")) {
             Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
             stopService(backgroundMusicIntent);
+            Intent timerIntent = new Intent(this, TimerService.class);
+            stopService(timerIntent);
+
             googleSignInClient.signOut();
             cancelRepeatingAlarms();
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.cancel(OmegaRecordsApp.REVISIT_NOTIFY_ID);
+            manager.cancel(OmegaRecordsApp.ALARM_NOTIFY_ID);
         }
 
         SignInButton signInButton = findViewById(R.id.sign_in_button);
@@ -110,7 +123,7 @@ public class SignInActivity extends AppCompatActivity {
     /**
      * update the user interface once this activity is started
      * first check the background music setting and turn it on if true
-     * then start an AppInfoActivity and a repeating notification
+     * then start an AppInfoActivity, a repeating notification and a timer
      */
     private void updateUI(GoogleSignInAccount account) {
         if (account != null) {
@@ -123,6 +136,8 @@ public class SignInActivity extends AppCompatActivity {
             }
 
             startRepeatingAlarms();
+            Intent timerIntent = new Intent(this, TimerService.class);
+            ContextCompat.startForegroundService(this, timerIntent);
             Intent appInfoIntent = new Intent(this, AppInfoActivity.class);
             startActivity(appInfoIntent);
         }

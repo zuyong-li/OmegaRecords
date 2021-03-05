@@ -12,28 +12,35 @@ import android.os.Build;
 public class OmegaRecordsApp extends Application {
     public static final String REVISIT_CHANNEL_ID = "visit again";
     public static final String ALARM_CHANNEL_ID = "repeated notification";
+    public static final String TIMER_CHANNEL_ID = "count up timer";
+
     public static final int REVISIT_NOTIFY_ID = 100;
     public static final int ALARM_NOTIFY_ID = 101;
+    public static final int TIMER_NOTIFY_ID = 200;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        createNotificationChannels();
+        createNotificationChannel(REVISIT_CHANNEL_ID,
+                "revisit channel",
+                "Channel for revisit reminder");
+        createNotificationChannel(ALARM_CHANNEL_ID,
+                "repeating alarm channel",
+                "Channel for repeating alarms");
+        createNotificationChannel(TIMER_CHANNEL_ID,
+                "timer channel",
+                "Channel for counting up timer");
     }
 
-    private void createNotificationChannels() {
+    /**
+     * a helper method to create a notification channel with the given channelId, name, and description
+     * all channels created by this method have the default importance
+     */
+    private void createNotificationChannel(final String channelId, String name, String description) {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel1 = new NotificationChannel(REVISIT_CHANNEL_ID,
-                    "revisit channel", NotificationManager.IMPORTANCE_DEFAULT);
-            channel1.setDescription("Channel for revisit reminder");
-
-            NotificationChannel channel2 = new NotificationChannel(ALARM_CHANNEL_ID,
-                    "repeated channel", NotificationManager.IMPORTANCE_DEFAULT);
-            channel2.setDescription("Channel for repeated notifications");
-
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel1);
-            manager.createNotificationChannel(channel2);
+            NotificationChannel channel = new NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription(description);
+            getSystemService(NotificationManager.class).createNotificationChannel(channel);
         }
     }
 }
