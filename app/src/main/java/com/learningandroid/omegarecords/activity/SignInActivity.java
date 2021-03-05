@@ -29,6 +29,7 @@ import com.learningandroid.omegarecords.utils.ActivityUtils;
 /**
  * SignInActivity allows end users to sign in this app using their Gmail accounts
  * When logged out, this activity will also show up to allow the end user to sign in again
+ * deep linking enabled, this app can be accessed via https://www.learningandroid.com
  */
 public class SignInActivity extends AppCompatActivity {
 

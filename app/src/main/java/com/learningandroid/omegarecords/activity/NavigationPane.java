@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.domain.LoggedInUser;
 import com.learningandroid.omegarecords.domain.Settings;
 import com.learningandroid.omegarecords.fragment.SettingsFragment;
+import com.learningandroid.omegarecords.receiver.AirplaneModeReceiver;
 import com.learningandroid.omegarecords.utils.ActivityUtils;
 
 
@@ -44,11 +46,14 @@ public class NavigationPane extends AppCompatActivity {
 
     GoogleSignInAccount account;
     ActionBarDrawerToggle actionBarDrawerToggle;
+    AirplaneModeReceiver airplaneModeReceiver = new AirplaneModeReceiver();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         account = GoogleSignIn.getLastSignedInAccount(this);
+
+        registerReceiver(airplaneModeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
     }
 
     @Override
@@ -174,6 +179,14 @@ public class NavigationPane extends AppCompatActivity {
                     .create().show();
         } else {
             ActivityCompat.requestPermissions(this, new String[] {permission}, request_code);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(airplaneModeReceiver != null) {
+            unregisterReceiver(airplaneModeReceiver);
         }
     }
 }
