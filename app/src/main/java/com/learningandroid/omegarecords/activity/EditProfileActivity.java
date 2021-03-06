@@ -3,12 +3,16 @@ package com.learningandroid.omegarecords.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -22,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -113,27 +118,50 @@ public class EditProfileActivity extends NavigationPane {
         // click save button to save the user input
         findViewById(R.id.profile_save_button).setOnClickListener(this::saveData);
 
-        // click the user profile image to take photos using camera
-        findViewById(R.id.profile_user_photo).setOnClickListener((View view) -> {
-            if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
-                    Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestPermission("Allow camera access to take a profile photo",
-                        Manifest.permission.CAMERA, CAMERA_PERMISSION_REQUEST_CODE);
-            } else {
-                dispatchTakePictureIntent();
-            }
-        });
+        // click profile image, displays a dialog and allows user to choose between
+        // using a camera or picking image from gallery
+        findViewById(R.id.profile_user_photo).setOnClickListener(v -> new AlertDialog.Builder(this)
+                .setMessage("Set profile image by taking a photo using camera or choosing a photo from gallery")
+                .setPositiveButton("Camera", (dialog, which) -> setProfileImageFromCamera())
+                .setNegativeButton("Gallery", (dialog, which) -> setProfileImageFromGallery())
+                .create().show());
 
         // click the address image to allow using current location
         findViewById(R.id.profile_address_photo).setOnClickListener((View view) -> {
             if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermission("Allow location access to auto fill or update address information",
-                        Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_REQUEST_CODE);
+                        Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_CODE);
             } else {
                 checkSettingsAndUpdateAddressInfo();
             }
         });
+    }
+
+    /**
+     * set the profile image by starting camera activity with runtime permission request
+     */
+    private void setProfileImageFromCamera() {
+        if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestPermission("Allow camera access to take a profile photo",
+                    Manifest.permission.CAMERA, CAMERA_PERMISSION_CODE);
+        } else {
+            dispatchTakePictureIntent();
+        }
+    }
+
+    /**
+     * set the profile image by picking from gallery with runtime permission request
+     */
+    private void setProfileImageFromGallery() {
+        if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermission("Allow gallery access to choose profile photo",
+                    Manifest.permission.READ_EXTERNAL_STORAGE, IMAGE_PERMISSION_CODE);
+        } else {
+            pickImageFromGallery();
+        }
     }
 
     @Override
@@ -226,7 +254,7 @@ public class EditProfileActivity extends NavigationPane {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // if camera permission is granted, start a camera intent to set up profile image
-        if(requestCode == CAMERA_PERMISSION_REQUEST_CODE) {
+        if(requestCode == CAMERA_PERMISSION_CODE) {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
                 dispatchTakePictureIntent();
@@ -236,12 +264,22 @@ public class EditProfileActivity extends NavigationPane {
         }
 
         // if location permission is granted, auto fill the address info
-        if(requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+        if(requestCode == LOCATION_PERMISSION_CODE) {
             if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Location Permission Granted", Toast.LENGTH_SHORT).show();
                 checkSettingsAndUpdateAddressInfo();
             } else {
                 Toast.makeText(this, "Location Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        // if read external storage permission is granted, set profile image by picking from gallery
+        if(requestCode == IMAGE_PERMISSION_CODE) {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Gallery Permission Denied", Toast.LENGTH_SHORT).show();
+                pickImageFromGallery();
+            } else {
+                Toast.makeText(this, "Gallery Permission Denied", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -254,9 +292,8 @@ public class EditProfileActivity extends NavigationPane {
     private File createImageFile() throws IOException {
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-        //createTempFile(prefix, suffix, directory)
         File image = File.createTempFile(imageFileName,".jpg", storageDir);
         loggedInUser.setSelfPortraitPath(image.getAbsolutePath());
         return image;
@@ -284,22 +321,50 @@ public class EditProfileActivity extends NavigationPane {
                     "com.learningandroid.android.fileprovider",
                     photoFile);
             takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-            startActivityForResult(takePictureIntent, CAMERA_INTENT_REQUEST_CODE);
+            startActivityForResult(takePictureIntent, CAMERA_INTENT_CODE);
         }
     }
 
     /**
-     * handle activity result, specifically for camera activity invoked by dispatchTakePictureIntent()
+     * handle activity result
+     * for camera activity invoked by dispatchTakePictureIntent()
      * if the activity succeeds, LOGGED_IN_USER.selfPortraitPath has to be correctly set
-     * then display the profile image captured by the camera
+     * then display the profile image captured by the camera and save the image to gallery
+     * for image pick activity invoked by pickImageFromGallery()
+     * if succeeds, update selfPortrait path, and display image
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == CAMERA_INTENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if(requestCode == CAMERA_INTENT_CODE && resultCode == Activity.RESULT_OK) {
             File file = new File(loggedInUser.getSelfPortraitPath());
+            Log.d("file path", loggedInUser.getSelfPortraitPath());
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
+
+            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            mediaScanIntent.setData(Uri.fromFile(file));
+            this.sendBroadcast(mediaScanIntent);
         }
+
+        if(requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK && data != null) {
+            Uri uri = data.getData();
+            setSelfPortraitPathFromUri(this, uri);
+            Log.d("file path", loggedInUser.getSelfPortraitPath());
+            ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(uri);
+        }
+    }
+
+    /**
+     * a helper method to extract the real path of an image from URI
+     * and set the user selfPortrait path to this real path
+     */
+    private void setSelfPortraitPathFromUri(Context context, Uri uri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        loggedInUser.setSelfPortraitPath(cursor.getString(columnIndex));
+        cursor.close();
     }
 
     /**
@@ -362,5 +427,13 @@ public class EditProfileActivity extends NavigationPane {
      */
     private void stopLocationUpdates() {
         fusedLocationProviderClient.removeLocationUpdates(locationCallback);
+    }
+
+    /**
+     * pick the self portrait image from gallery
+     */
+    private void pickImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, IMAGE_PICK_CODE);
     }
 }

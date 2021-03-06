@@ -39,7 +39,7 @@ import com.learningandroid.omegarecords.utils.ActivityUtils;
  */
 public class SignInActivity extends AppCompatActivity {
 
-    private static final int SIGN_IN = 102;
+    private static final int SIGN_IN = 300;
     GoogleSignInClient googleSignInClient;
 
     @Override

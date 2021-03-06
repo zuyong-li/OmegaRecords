@@ -16,7 +16,7 @@ public class OmegaRecordsApp extends Application {
 
     public static final int REVISIT_NOTIFY_ID = 100;
     public static final int ALARM_NOTIFY_ID = 101;
-    public static final int TIMER_NOTIFY_ID = 200;
+    public static final int TIMER_NOTIFY_ID = 102;
 
     @Override
     public void onCreate() {

@@ -40,10 +40,11 @@ import java.util.Objects;
  */
 public class NavigationPane extends AppCompatActivity {
 
-
-    public static final int CAMERA_PERMISSION_REQUEST_CODE = 103;
-    public static final int CAMERA_INTENT_REQUEST_CODE = 104;
-    public static final int LOCATION_PERMISSION_REQUEST_CODE = 105;
+    public static final int CAMERA_PERMISSION_CODE = 200;
+    public static final int CAMERA_INTENT_CODE = 201;
+    public static final int IMAGE_PERMISSION_CODE = 202;
+    public static final int IMAGE_PICK_CODE = 203;
+    public static final int LOCATION_PERMISSION_CODE = 204;
 
     GoogleSignInAccount account;
     ActionBarDrawerToggle actionBarDrawerToggle;
