@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.activity;
+package com.learningandroid.omegarecords.component.activity;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -24,19 +25,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.navigation.NavigationView;
 import com.learningandroid.omegarecords.OmegaRecordsApp;
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.domain.LoggedInUser;
-import com.learningandroid.omegarecords.domain.Settings;
-import com.learningandroid.omegarecords.fragment.SettingsFragment;
-import com.learningandroid.omegarecords.receiver.AirplaneModeReceiver;
-import com.learningandroid.omegarecords.utils.ActivityUtils;
+import com.learningandroid.omegarecords.db.entity.LoggedInUser;
+import com.learningandroid.omegarecords.component.fragment.SettingsFragment;
+import com.learningandroid.omegarecords.component.receiver.AirplaneModeReceiver;
+import com.learningandroid.omegarecords.viewmodel.LoggedInUserViewModel;
 
 
 import java.util.Objects;
 
 /**
  * this class provides the method for creating and setting the menu
- * it also stores the useful information needed for the whole app, USERS, ME, FILENAME
- * it also ensures that rotation functions as expected by overriding onSaveInstanceState and onRestoreInstanceState
+ * it also provides common methods for all activities and register broadcast receivers
  */
 public class NavigationPane extends AppCompatActivity {
 
@@ -45,16 +44,20 @@ public class NavigationPane extends AppCompatActivity {
     public static final int IMAGE_PERMISSION_CODE = 202;
     public static final int IMAGE_PICK_CODE = 203;
     public static final int LOCATION_PERMISSION_CODE = 204;
+    private static final String TAG = "NAVIGATION PANE";
 
     GoogleSignInAccount account;
     ActionBarDrawerToggle actionBarDrawerToggle;
     AirplaneModeReceiver airplaneModeReceiver = new AirplaneModeReceiver();
+    LoggedInUserViewModel loggedInUserViewModel;
+    LoggedInUser loggedInUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         account = GoogleSignIn.getLastSignedInAccount(this);
 
+        loggedInUserViewModel = new ViewModelProvider(this).get(LoggedInUserViewModel.class);
         registerReceiver(airplaneModeReceiver, new IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED));
     }
 
@@ -107,11 +110,8 @@ public class NavigationPane extends AppCompatActivity {
                     startActivity(viewUsersIntent);
                     break;
                 case R.id.settings:
-                    String fileName = account.getEmail() + ".settings.txt";
-                    ActivityUtils<Settings> utils = new ActivityUtils<>();
-                    Settings settings = utils.loadData(this, fileName, new Settings());
                     getSupportFragmentManager().beginTransaction()
-                            .add(R.id.setting_fragment_container, new SettingsFragment(settings, fileName), null)
+                            .add(R.id.setting_fragment_container, new SettingsFragment(), null)
                             .commit();
                     break;
                 case R.id.logout:
@@ -156,11 +156,10 @@ public class NavigationPane extends AppCompatActivity {
      */
     public LoggedInUser loadLoggedInUser() {
         if(account != null) {
-            ActivityUtils<LoggedInUser> utils = new ActivityUtils<>();
-            LoggedInUser user = new LoggedInUser();
-            user.setEmail(account.getEmail());
-            user.setName(account.getDisplayName());
-            return utils.loadData(this, account.getEmail() + ".txt", user);
+            LoggedInUser loggedInUser = new LoggedInUser();
+            loggedInUser.setName(account.getDisplayName());
+            loggedInUser.setEmail(account.getEmail());
+            return loggedInUserViewModel.loadLoggedInUser(loggedInUser);
         } else {
             return null;
         }
@@ -190,7 +189,7 @@ public class NavigationPane extends AppCompatActivity {
         try {
             unregisterReceiver(airplaneModeReceiver);
         } catch (Exception e) {
-            Log.d("unregister receiver", e.getMessage());
+            Log.i(TAG, e.getMessage());
         }
     }
 }

@@ -1,11 +1,11 @@
-package com.learningandroid.omegarecords.activity;
+package com.learningandroid.omegarecords.component.activity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -26,11 +26,11 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.learningandroid.omegarecords.OmegaRecordsApp;
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.domain.Settings;
-import com.learningandroid.omegarecords.receiver.NotificationReceiver;
-import com.learningandroid.omegarecords.service.BackgroundMusic;
-import com.learningandroid.omegarecords.service.TimerService;
-import com.learningandroid.omegarecords.utils.ActivityUtils;
+import com.learningandroid.omegarecords.db.UserDatabase;
+import com.learningandroid.omegarecords.component.receiver.NotificationReceiver;
+import com.learningandroid.omegarecords.component.service.BackgroundMusic;
+import com.learningandroid.omegarecords.component.service.TimerService;
+import com.learningandroid.omegarecords.viewmodel.SettingsViewModel;
 
 /**
  * SignInActivity allows end users to sign in this app using their Gmail accounts
@@ -39,6 +39,7 @@ import com.learningandroid.omegarecords.utils.ActivityUtils;
  */
 public class SignInActivity extends AppCompatActivity {
 
+    private static final String TAG = "SIGN IN";
     private static final int SIGN_IN = 300;
     GoogleSignInClient googleSignInClient;
 
@@ -55,7 +56,7 @@ public class SignInActivity extends AppCompatActivity {
         // if this intent is accompanied with message sign out,
         // stop background music, then sign out current account
         // it cancels the repeating notifications and timer
-        // it removes all the notifications
+        // it removes all the notifications and clear local database
         if(getIntent().hasExtra("sign_out")) {
             Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
             stopService(backgroundMusicIntent);
@@ -67,6 +68,7 @@ public class SignInActivity extends AppCompatActivity {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(OmegaRecordsApp.REVISIT_NOTIFY_ID);
             manager.cancel(OmegaRecordsApp.ALARM_NOTIFY_ID);
+            UserDatabase.getInstance(this).clearAllTables();
         }
 
         SignInButton signInButton = findViewById(R.id.sign_in_button);
@@ -93,7 +95,7 @@ public class SignInActivity extends AppCompatActivity {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         if(alarmManager != null) {
-            Log.d("repeating alarms", "canceled in log out");
+            Log.i(TAG, "cancel repeating alarm");
             alarmManager.cancel(pendingIntent);
         }
     }
@@ -109,7 +111,7 @@ public class SignInActivity extends AppCompatActivity {
         alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime() + 60 * 1000,
                 60 * 1000, pendingIntent);
-        Log.d("repeating alarms", "started in app info activity");
+        Log.i(TAG, "started repeating alarm");
     }
 
     @Override
@@ -121,16 +123,14 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     /**
-     * update the user interface once this activity is started
+     * update the user interface
      * first check the background music setting and turn it on if true
      * then start an AppInfoActivity, a repeating notification and a timer
      */
     private void updateUI(GoogleSignInAccount account) {
         if (account != null) {
-            // check whether the background music should be on
-            ActivityUtils<Settings> utils = new ActivityUtils<>();
-            String fileName = account.getEmail() + ".settings.txt";
-            if(utils.loadData(this, fileName, new Settings()).getBackgroundMusicOn()) {
+            SettingsViewModel settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
+            if(settingsViewModel.loadBackgroundMusicSetting()){
                 Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
                 startService(backgroundMusicIntent);
             }

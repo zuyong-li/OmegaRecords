@@ -1,15 +1,21 @@
-package com.learningandroid.omegarecords.domain;
+package com.learningandroid.omegarecords.db.entity;
+
+import androidx.room.Embedded;
+import androidx.room.Ignore;
 
 public class Address {
     private String street;
     private String suite;
     private String city;
     private String zipcode;
+
+    @Embedded(prefix = "geo_")
     private Geography geo;
 
     public Address() {
     }
 
+    @Ignore
     public Address(String street, String suite, String city, String zipcode, Geography geo) {
         this.street = street;
         this.suite = suite;

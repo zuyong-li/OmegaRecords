@@ -1,18 +1,15 @@
-package com.learningandroid.omegarecords.activity;
+package com.learningandroid.omegarecords.component.activity;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Looper;
@@ -26,7 +23,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
@@ -41,11 +37,11 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.domain.Address;
-import com.learningandroid.omegarecords.domain.Company;
-import com.learningandroid.omegarecords.domain.Geography;
-import com.learningandroid.omegarecords.domain.LoggedInUser;
-import com.learningandroid.omegarecords.utils.ActivityUtils;
+import com.learningandroid.omegarecords.db.entity.Address;
+import com.learningandroid.omegarecords.db.entity.Company;
+import com.learningandroid.omegarecords.db.entity.Geography;
+import com.learningandroid.omegarecords.db.entity.LoggedInUser;
+import com.learningandroid.omegarecords.utils.GsonProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,8 +57,9 @@ import java.util.Locale;
  */
 public class EditProfileActivity extends NavigationPane {
 
-    public static final String USER_KEY = "loggedInUser";
-    LoggedInUser loggedInUser;
+    private static final String USER_KEY = "loggedInUser";
+    private static final String TAG = "EDIT PROFILE";
+
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallback;
@@ -86,10 +83,10 @@ public class EditProfileActivity extends NavigationPane {
     private void initialize(Bundle savedInstanceState) {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(5000);
-        locationRequest.setFastestInterval(2000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest = LocationRequest.create()
+                .setInterval(5000)
+                .setFastestInterval(2000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
         // after successfully updating the location, use the current location to fill out the address info
         locationCallback = new LocationCallback() {
@@ -107,7 +104,7 @@ public class EditProfileActivity extends NavigationPane {
         if(savedInstanceState == null) {
             loggedInUser = loadLoggedInUser();
         } else {
-            loggedInUser = ActivityUtils.getGsonParser().fromJson(savedInstanceState.getString(USER_KEY), LoggedInUser.class);
+            loggedInUser = GsonProvider.getInstance().fromJson(savedInstanceState.getString(USER_KEY), LoggedInUser.class);
         }
     }
 
@@ -168,7 +165,7 @@ public class EditProfileActivity extends NavigationPane {
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        String loggedInUserJson = ActivityUtils.getGsonParser().toJson(loggedInUser);
+        String loggedInUserJson = GsonProvider.getInstance().toJson(loggedInUser);
         outState.putString(USER_KEY, loggedInUserJson);
     }
 
@@ -210,11 +207,9 @@ public class EditProfileActivity extends NavigationPane {
             setDataHelper(R.id.profile_com_business, company.getBs());
         }
 
-        if (loggedInUser.getSelfPortraitPath() != null) {
-            File file = new File(loggedInUser.getSelfPortraitPath());
-            ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
-        } else {
-            Toast.makeText(this, "no saved photo", Toast.LENGTH_SHORT).show();
+        Uri selfPortrait = loggedInUserViewModel.loadSelfPortrait(loggedInUser);
+        if(selfPortrait != null) {
+            ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(selfPortrait);
         }
     }
 
@@ -243,9 +238,7 @@ public class EditProfileActivity extends NavigationPane {
         loggedInUser.setPhone(((EditText) findViewById(R.id.profile_user_phone)).getText().toString());
         loggedInUser.setWebsite(((EditText) findViewById(R.id.profile_user_website)).getText().toString());
 
-        String userText = ActivityUtils.getGsonParser().toJson(loggedInUser);
-        String fileName = account.getEmail() + ".txt";
-        ActivityUtils.saveData(this, userText, fileName);
+        loggedInUserViewModel.saveLoggedInUser(loggedInUser);
     }
 
     /**
@@ -286,7 +279,7 @@ public class EditProfileActivity extends NavigationPane {
 
     /**
      * create a file for the profile photo
-     * update ME.selfPortraitPath to this file
+     * update logged in user's selfPortraitPath to this file
      * using timeStamp to create a collision-resistant file name
      */
     private File createImageFile() throws IOException {
@@ -327,44 +320,25 @@ public class EditProfileActivity extends NavigationPane {
 
     /**
      * handle activity result
-     * for camera activity invoked by dispatchTakePictureIntent()
-     * if the activity succeeds, LOGGED_IN_USER.selfPortraitPath has to be correctly set
-     * then display the profile image captured by the camera and save the image to gallery
-     * for image pick activity invoked by pickImageFromGallery()
-     * if succeeds, update selfPortrait path, and display image
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        // if taking selfPortrait using camera is successful
+        // save the image to gallery and set the imageView of profile user photo
         if(requestCode == CAMERA_INTENT_CODE && resultCode == Activity.RESULT_OK) {
-            File file = new File(loggedInUser.getSelfPortraitPath());
-            Log.d("file path", loggedInUser.getSelfPortraitPath());
-            ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(Uri.fromFile(file));
-
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            mediaScanIntent.setData(Uri.fromFile(file));
-            this.sendBroadcast(mediaScanIntent);
+            Log.i(TAG, "image picked from camera");
+            loggedInUserViewModel.saveSelfPortrait(loggedInUser);
+            ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(loggedInUserViewModel.loadSelfPortrait(loggedInUser));
         }
 
+        // if picking selfPortrait from gallery is successful
+        // set the real path of the image as the selfPortraitPath of the logged in user
         if(requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK && data != null) {
-            Uri uri = data.getData();
-            setSelfPortraitPathFromUri(this, uri);
-            Log.d("file path", loggedInUser.getSelfPortraitPath());
-            ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(uri);
+            Log.i(TAG, "image picked from gallery");
+            loggedInUser.setSelfPortraitPath(loggedInUserViewModel.getFilePathFromUri(data.getData()));
+            ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(loggedInUserViewModel.loadSelfPortrait(loggedInUser));
         }
-    }
-
-    /**
-     * a helper method to extract the real path of an image from URI
-     * and set the user selfPortrait path to this real path
-     */
-    private void setSelfPortraitPathFromUri(Context context, Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-        int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        loggedInUser.setSelfPortraitPath(cursor.getString(columnIndex));
-        cursor.close();
     }
 
     /**
@@ -376,7 +350,7 @@ public class EditProfileActivity extends NavigationPane {
             List<android.location.Address> addresses = geocoder.getFromLocation(location.getLatitude(),
                     location.getLongitude(), 1);
             android.location.Address address = addresses.get(0);
-            Log.d("location", address.toString());
+
             ((EditText) findViewById(R.id.profile_address_street)).
                     setText(address.getAddressLine(0).split(",")[0]);
             ((EditText) findViewById(R.id.profile_address_city)).setText(address.getLocality());

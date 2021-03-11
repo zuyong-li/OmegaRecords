@@ -1,4 +1,6 @@
-package com.learningandroid.omegarecords.domain;
+package com.learningandroid.omegarecords.db.entity;
+
+import androidx.room.Ignore;
 
 public class Geography {
     private String lat;
@@ -7,6 +9,7 @@ public class Geography {
     public Geography() {
     }
 
+    @Ignore
     public Geography(String lat, String lng) {
         this.lat = lat;
         this.lng = lng;

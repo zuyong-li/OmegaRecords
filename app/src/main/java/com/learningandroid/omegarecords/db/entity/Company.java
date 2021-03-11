@@ -1,4 +1,6 @@
-package com.learningandroid.omegarecords.domain;
+package com.learningandroid.omegarecords.db.entity;
+
+import androidx.room.Ignore;
 
 public class Company {
     private String name;
@@ -8,6 +10,7 @@ public class Company {
     public Company() {
     }
 
+    @Ignore
     public Company(String name, String catchPhrase, String bs) {
         this.name = name;
         this.catchPhrase = catchPhrase;

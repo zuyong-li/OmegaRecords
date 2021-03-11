@@ -1,13 +1,13 @@
-package com.learningandroid.omegarecords.activity;
+package com.learningandroid.omegarecords.component.activity;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,68 +20,63 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.StreetViewSource;
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.domain.Address;
-import com.learningandroid.omegarecords.domain.Company;
-import com.learningandroid.omegarecords.domain.Geography;
-import com.learningandroid.omegarecords.domain.LoggedInUser;
-import com.learningandroid.omegarecords.domain.User;
-import com.learningandroid.omegarecords.utils.ActivityUtils;
-import com.squareup.picasso.Picasso;
+import com.learningandroid.omegarecords.db.entity.Address;
+import com.learningandroid.omegarecords.db.entity.Company;
+import com.learningandroid.omegarecords.db.entity.Geography;
+import com.learningandroid.omegarecords.db.entity.LoggedInUser;
+import com.learningandroid.omegarecords.db.entity.User;
+import com.learningandroid.omegarecords.utils.GsonProvider;
+import com.learningandroid.omegarecords.utils.ImageUtils;
+import com.learningandroid.omegarecords.viewmodel.ImageViewModel;
 
-import java.io.File;
 
 /**
  * this activity displays the user detail
- * if the user is ME and ME.address/company are not set, redirect to EditProfileActivity
+ * if the user is the logged in user but his/her detail is not set, redirect to EditProfileActivity
  */
 public class ViewUserDetailsActivity extends NavigationPane
         implements OnMapReadyCallback, OnStreetViewPanoramaReadyCallback {
 
     private User user = null;
-    private static final String USER_URL = "https://robohash.org/";
-    private static final String COM_URL = "https://source.unsplash.com/random/200x200?sig=";
+    ImageViewModel imageViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_user_details);
 
+        imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
         fetchData();
         setData();
     }
 
     /**
-     * Extract the index of user in USERS array whose detail is going to displayed
+     * fetch the user data which is passed along as a Json string in the extra
      */
     private void fetchData() {
         if(getIntent().hasExtra("user_details")) {
-            user = ActivityUtils.getGsonParser().fromJson(getIntent().getStringExtra("user_details"), User.class);
+            user = GsonProvider.getInstance().fromJson(getIntent().getStringExtra("user_details"), User.class);
         } else if(getIntent().hasExtra("logged_in_user_details")){
-            user = ActivityUtils.getGsonParser().fromJson(getIntent().getStringExtra("logged_in_user_details"), LoggedInUser.class);
+            user = GsonProvider.getInstance().fromJson(getIntent().getStringExtra("logged_in_user_details"), LoggedInUser.class);
         }
     }
 
     /**
      * setup the layout to display user details
-     * if position >= USERS.length, then the detail of ME will be displayed
      * if LoggedInUser.address/company are not set, redirect to EditProfileActivity
      */
     private void setData() {
         if (user != null) {
             // find the user and the user has detailed information to show
-            if (user.getAddress() != null && user.getCompany() != null) {
+            if (user.getAddress() != null && user.getAddress().getGeo() != null && user.getCompany() != null) {
                 // set up the personal info card view
                 ((TextView) findViewById(R.id.user_details_name)).setText(user.getName());
                 ((TextView) findViewById(R.id.user_details_phone)).setText(user.getPhone());
                 ((TextView) findViewById(R.id.user_details_email)).setText(user.getEmail());
                 ((TextView) findViewById(R.id.user_details_website)).setText(user.getWebsite());
-                ImageView userDetailsPhoto = findViewById(R.id.user_details_photo);
-                if(user instanceof LoggedInUser && ((LoggedInUser) user).getSelfPortraitPath() != null) {
-                    File file = new File(((LoggedInUser) user).getSelfPortraitPath());
-                    userDetailsPhoto.setImageURI(Uri.fromFile(file));
-                } else {
-                    Picasso.get().load(USER_URL + user.getName()).into(userDetailsPhoto);
-                }
+
+                ImageViewModel imageViewModel = new ViewModelProvider(this).get(ImageViewModel.class);
+                ImageUtils.setUserImage(findViewById(R.id.user_details_photo), user, imageViewModel, loggedInUserViewModel);
 
                 // set up the address info card view
                 Address address = user.getAddress();
@@ -105,8 +100,7 @@ public class ViewUserDetailsActivity extends NavigationPane
                 ((TextView) findViewById(R.id.user_details_com_catch_phrase))
                         .setText(company.getCatchPhrase());
                 ((TextView) findViewById(R.id.user_details_com_business)).setText(company.getBs());
-                ImageView userCompanyPhoto = findViewById(R.id.user_details_com_photo);
-                Picasso.get().load(COM_URL + user.getId()).into(userCompanyPhoto);
+                ImageUtils.setCompanyImage(findViewById(R.id.user_details_com_photo), user, imageViewModel);
 
                 findViewById(R.id.user_details).setVisibility(View.VISIBLE);
             } else {
@@ -121,6 +115,10 @@ public class ViewUserDetailsActivity extends NavigationPane
         }
     }
 
+    /**
+     * get the latitude/longitude coordinates of the USER's address
+     * by default, the coordinates is being set to Sacramento
+     */
     private LatLng getLocation() {
         double lat = 38.578874, lng = -121.502319;
         if(user != null && user.getAddress() != null && user.getAddress().getGeo() != null) {
@@ -135,6 +133,9 @@ public class ViewUserDetailsActivity extends NavigationPane
         return new LatLng(lat, lng);
     }
 
+    /**
+     * when map is ready, set a marker at the coordinates
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         LatLng position = this.getLocation();
@@ -151,6 +152,9 @@ public class ViewUserDetailsActivity extends NavigationPane
         });
     }
 
+    /**
+     * when street view is ready, show the the street view
+     */
     @Override
     public void onStreetViewPanoramaReady(StreetViewPanorama streetViewPanorama) {
         LatLng position = this.getLocation();

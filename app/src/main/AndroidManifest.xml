@@ -22,30 +22,30 @@
         android:usesCleartextTraffic="true">
 
         <receiver
-            android:name=".receiver.NotificationReceiver"
+            android:name=".component.receiver.NotificationReceiver"
             android:enabled="true" />
 
         <service
-            android:name=".service.BackgroundMusic"
+            android:name=".component.service.BackgroundMusic"
             android:enabled="true" />
         <service
-            android:name=".service.TimerService"
+            android:name=".component.service.TimerService"
             android:enabled="true" />
 
         <activity
-            android:name=".activity.AppInfoActivity"
+            android:name=".component.activity.AppInfoActivity"
             android:label="@string/app_info" />
         <activity
-            android:name=".activity.EditProfileActivity"
+            android:name=".component.activity.EditProfileActivity"
             android:label="@string/edit_profile_label" />
         <activity
-            android:name=".activity.ViewUserDetailsActivity"
+            android:name=".component.activity.ViewUserDetailsActivity"
             android:label="@string/view_user_details_label"
-            android:parentActivityName=".activity.ViewUsersActivity" />
+            android:parentActivityName=".component.activity.ViewUsersActivity" />
         <activity
-            android:name=".activity.ViewUsersActivity"
+            android:name=".component.activity.ViewUsersActivity"
             android:label="@string/view_user_label" />
-        <activity android:name=".activity.SignInActivity">
+        <activity android:name=".component.activity.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

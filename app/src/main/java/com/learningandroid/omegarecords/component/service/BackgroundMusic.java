@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.service;
+package com.learningandroid.omegarecords.component.service;
 
 import android.app.Service;
 import android.content.Intent;
@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 import com.learningandroid.omegarecords.R;
 
 /**
- * A background service to play a background music for this app
+ * A started service to play a background music for this app
  * the music is downloaded from
  * https://www.fesliyanstudios.com/royalty-free-music/downloads-c/peaceful-and-relaxing-music/22
  */

@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.domain;
+package com.learningandroid.omegarecords.db.entity;
 
 public class LoggedInUser extends User{
     String selfPortraitPath;

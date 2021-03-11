@@ -5,6 +5,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
+import com.learningandroid.omegarecords.db.UserDatabase;
+
 /**
  * it is a singleton class with the following functionality
  * it creates the notification channels
@@ -30,6 +32,7 @@ public class OmegaRecordsApp extends Application {
         createNotificationChannel(TIMER_CHANNEL_ID,
                 "timer channel",
                 "Channel for counting up timer");
+
     }
 
     /**
@@ -42,5 +45,9 @@ public class OmegaRecordsApp extends Application {
             channel.setDescription(description);
             getSystemService(NotificationManager.class).createNotificationChannel(channel);
         }
+    }
+
+    public UserDatabase getUserDatabase() {
+        return UserDatabase.getInstance(this);
     }
 }

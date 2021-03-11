@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#C7CAAA"
-    tools:context=".activity.EditProfileActivity">
+    tools:context=".component.activity.EditProfileActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/edit_profile"
@@ -19,7 +19,6 @@
             android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -83,7 +82,6 @@
             android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:layout_marginLeft="25dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toEndOf="@+id/profile_personal_info"
             app:layout_constraintTop_toTopOf="parent">
@@ -119,7 +117,6 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
                     android:layout_marginTop="10dp"
                     android:autofillHints=""
                     android:ems="10"
@@ -155,7 +152,6 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
                     android:autofillHints=""
                     android:ems="10"
                     android:hint="@string/profile_address_zipcode"
@@ -168,7 +164,6 @@
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
                     android:autofillHints=""
                     android:ems="10"
                     android:hint="@string/profile_geo_lng"
@@ -184,7 +179,6 @@
             android:layout_width="210dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
-            android:layout_marginLeft="25dp"
             android:layout_marginTop="10dp"
             app:layout_constraintStart_toEndOf="@+id/profile_address_info"
             app:layout_constraintTop_toTopOf="parent">
@@ -198,7 +192,6 @@
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
                     android:contentDescription="@string/user_details_com_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

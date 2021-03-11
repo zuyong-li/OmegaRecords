@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.receiver;
+package com.learningandroid.omegarecords.component.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -12,16 +12,16 @@ import android.widget.Toast;
  */
 public class AirplaneModeReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "Airplane Mode";
+    private static final String TAG = "AIRPLANE MODE";
 
     @Override
     public void onReceive(Context context, Intent intent) {
         if(Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 0) {
             Toast.makeText(context, "Airplane Mode is off", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "airplane mode off");
+            Log.i(TAG, "airplane mode off");
         } else {
             Toast.makeText(context, "Airplane Mode is on", Toast.LENGTH_SHORT).show();
-            Log.d(TAG, "airplane mode on");
+            Log.i(TAG, "airplane mode on");
         }
     }
 }

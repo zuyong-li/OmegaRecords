@@ -4,6 +4,8 @@
     <string name="view_user_details_label">User Details</string>
     <string name="edit_profile_label">Edit Profile</string>
 
+    <string name="preference_file_key">"com.learningandroid.omegarecords.PREFERENCE_FILE_KEY"</string>
+    <string name="preference_file_bkgndmusic_key">BKGND_MUSIC_KEY</string>
     <!-- for app info -->
     <string name="app_info_description">Omega Records allows companies to manage their employee
         records effectively. It includes the following features. </string>

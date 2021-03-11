@@ -1,20 +1,28 @@
-package com.learningandroid.omegarecords.domain;
+package com.learningandroid.omegarecords.db.entity;
 
-import java.io.Serializable;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
+@Entity
 public class User {
+    @PrimaryKey
     private Integer id;
     private String name;
     private String username;
     private String email;
     private String phone;
     private String website;
+    @Embedded(prefix = "addr_")
     private Address address;
+    @Embedded(prefix = "com_")
     private Company company;
 
     public User() {
     }
 
+    @Ignore
     public User(Integer id, String name, String username, String email, String phone,
                 String website, Address address, Company company) {
         this.id = id;

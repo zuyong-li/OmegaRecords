@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.receiver;
+package com.learningandroid.omegarecords.component.receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

@@ -1,12 +1,12 @@
-package com.learningandroid.omegarecords.activity;
+package com.learningandroid.omegarecords.component.activity;
 
 import android.os.Bundle;
 
 import com.learningandroid.omegarecords.R;
 
 /**
- * purpose of this activity is to display general information of this app
- * after user login, this activity will show up
+ * the default activity to show up after google sign in succeeds
+ * it displays general information of the app
  */
 public class AppInfoActivity extends NavigationPane {
 

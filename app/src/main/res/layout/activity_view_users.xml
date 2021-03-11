@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#C7CAAA"
-    tools:context=".activity.ViewUsersActivity">
+    tools:context=".component.activity.ViewUsersActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/view_users"

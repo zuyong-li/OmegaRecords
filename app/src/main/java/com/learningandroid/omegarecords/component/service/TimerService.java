@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.service;
+package com.learningandroid.omegarecords.component.service;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -14,7 +14,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * a start service to display the time elapsed since the user has logged in
+ * a started service to display the time elapsed since the user has logged in
  */
 public class TimerService extends Service {
 
