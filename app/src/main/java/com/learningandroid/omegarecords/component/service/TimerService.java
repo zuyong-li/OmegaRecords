@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import com.learningandroid.omegarecords.OmegaRecordsApp;
 import com.learningandroid.omegarecords.R;
@@ -22,6 +23,7 @@ public class TimerService extends Service {
     Integer time = 0;
     TimerTask timerTask;
     NotificationCompat.Builder builder;
+    NotificationManagerCompat manager;
 
     @Override
     public void onCreate() {
@@ -30,6 +32,7 @@ public class TimerService extends Service {
                 .setSmallIcon(R.drawable.ic_channel)
                 .setContentTitle("Timer")
                 .setContentText("The time you spent on this app is " + getTime());
+        manager = NotificationManagerCompat.from(this);
     }
 
     /**
@@ -56,19 +59,21 @@ public class TimerService extends Service {
             public void run() {
                 time++;
                 builder.setContentText("The time you spent on this app is " + getTime());
-                startForeground(OmegaRecordsApp.TIMER_NOTIFY_ID, builder.build());
+                manager.notify(OmegaRecordsApp.TIMER_NOTIFY_ID, builder.build());
             }
         };
         timer.scheduleAtFixedRate(timerTask, 0, 1000);
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        timer = null;
+        if(timer != null) {
+            timer.cancel();
+            timer = null;
+        }
         timerTask = null;
         stopForeground(true);
-        super.onDestroy();
     }
 }
