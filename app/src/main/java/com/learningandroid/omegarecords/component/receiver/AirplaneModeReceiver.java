@@ -16,7 +16,7 @@ public class AirplaneModeReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 0) {
+        if (Settings.System.getInt(context.getContentResolver(), Settings.Global.AIRPLANE_MODE_ON, 0) == 0) {
             Toast.makeText(context, "Airplane Mode is off", Toast.LENGTH_SHORT).show();
             Log.i(TAG, "airplane mode off");
         } else {

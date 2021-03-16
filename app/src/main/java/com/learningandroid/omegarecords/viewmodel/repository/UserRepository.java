@@ -16,7 +16,7 @@ public class UserRepository {
     private static final String TAG = "FETCH DATA";
 
     public static UserRepository getInstance() {
-        if(userRepository == null) {
+        if (userRepository == null) {
             userRepository = new UserRepository();
         }
         return userRepository;
@@ -28,7 +28,7 @@ public class UserRepository {
      * if the local database is empty, fetch the user list from url
      */
     public LiveData<List<User>> getUsers(UserDatabase userDatabase) {
-        if(isEmpty(userDatabase)) {
+        if (isEmpty(userDatabase)) {
             UserWebDao userWebDao = UserWebDao.getInstance();
             Log.i(TAG, "user data fetched from website");
             return userWebDao.getUsers();

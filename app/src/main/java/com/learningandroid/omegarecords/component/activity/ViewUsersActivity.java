@@ -55,7 +55,7 @@ public class ViewUsersActivity extends NavigationPane {
         userViewModel.getUsers().observe(this, users -> {
             userList.addAll(users);
             userAdapter.notifyDataSetChanged();
-            if(userViewModel.shouldSaveDataToDatabase()) {
+            if (userViewModel.shouldSaveDataToDatabase()) {
                 UserDatabase.getInstance(this).userRoomDao().insertUsers(users);
             }
         });

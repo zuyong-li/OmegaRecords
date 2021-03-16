@@ -40,7 +40,7 @@ public class OmegaRecordsApp extends Application {
      * all channels created by this method have the default importance
      */
     private void createNotificationChannel(final String channelId, String name, String description) {
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId, name, NotificationManager.IMPORTANCE_DEFAULT);
             channel.setDescription(description);
             getSystemService(NotificationManager.class).createNotificationChannel(channel);

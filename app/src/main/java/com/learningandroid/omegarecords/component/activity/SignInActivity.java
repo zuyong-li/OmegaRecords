@@ -57,7 +57,7 @@ public class SignInActivity extends AppCompatActivity {
         // stop background music, then sign out current account
         // it cancels the repeating notifications and timer
         // it removes all the notifications and clear local database
-        if(getIntent().hasExtra("sign_out")) {
+        if (getIntent().hasExtra("sign_out")) {
             Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
             stopService(backgroundMusicIntent);
             Intent timerIntent = new Intent(this, TimerService.class);
@@ -81,7 +81,7 @@ public class SignInActivity extends AppCompatActivity {
         });
 
         Uri uri = getIntent().getData();
-        if(uri != null) {
+        if (uri != null) {
             Toast.makeText(this, "launched from url: " + uri.toString(), Toast.LENGTH_SHORT).show();
         }
     }
@@ -94,7 +94,7 @@ public class SignInActivity extends AppCompatActivity {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, receiverIntent, 0);
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        if(alarmManager != null) {
+        if (alarmManager != null) {
             Log.i(TAG, "cancel repeating alarm");
             alarmManager.cancel(pendingIntent);
         }
@@ -130,7 +130,7 @@ public class SignInActivity extends AppCompatActivity {
     private void updateUI(GoogleSignInAccount account) {
         if (account != null) {
             SettingsViewModel settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
-            if(settingsViewModel.loadBackgroundMusicSetting()){
+            if (settingsViewModel.loadBackgroundMusicSetting()) {
                 Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
                 startService(backgroundMusicIntent);
             }

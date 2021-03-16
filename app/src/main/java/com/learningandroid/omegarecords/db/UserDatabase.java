@@ -16,7 +16,7 @@ public abstract class UserDatabase extends RoomDatabase {
     private static UserDatabase userDatabase;
 
     public static synchronized UserDatabase getInstance(@NonNull Context context) {
-        if(userDatabase == null) {
+        if (userDatabase == null) {
             userDatabase = Room.databaseBuilder(context.getApplicationContext(),
                     UserDatabase.class, DB_NAME)
                     .allowMainThreadQueries()

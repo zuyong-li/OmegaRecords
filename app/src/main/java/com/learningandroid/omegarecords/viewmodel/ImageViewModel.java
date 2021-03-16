@@ -34,7 +34,7 @@ public class ImageViewModel extends ViewModel {
     }
 
     public void addBitmapToMemCache(@NonNull String key, Bitmap bitmap) {
-        if(getBitmapFromMemCache(key) == null) {
+        if (getBitmapFromMemCache(key) == null) {
             memoryCache.put(key, bitmap);
         }
     }

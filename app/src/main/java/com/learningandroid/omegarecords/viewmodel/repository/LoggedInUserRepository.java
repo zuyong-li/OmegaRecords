@@ -35,7 +35,7 @@ public class LoggedInUserRepository {
             StringBuilder stringBuilder = new StringBuilder();
             String line;
 
-            while((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 stringBuilder.append(line).append('\n');
             }
             result = GsonProvider.getInstance().fromJson(
@@ -51,7 +51,7 @@ public class LoggedInUserRepository {
      * save the logged in user details into the app-specific internal storage
      */
     public void saveLoggedInUser(@NonNull Context context, @NonNull LoggedInUser loggedInUser) {
-        try{
+        try {
             FileOutputStream fileOutputStream = context.openFileOutput(loggedInUser.getName(), Context.MODE_PRIVATE);
             String fileContents = GsonProvider.getInstance().toJson(loggedInUser);
             fileOutputStream.write(fileContents.getBytes());
@@ -67,7 +67,7 @@ public class LoggedInUserRepository {
      */
     public void saveSelfPortraitToGallery(@NonNull Context context, @NonNull LoggedInUser loggedInUser) {
         String path = loggedInUser.getSelfPortraitPath();
-        if(!TextUtils.isEmpty(path)) {
+        if (!TextUtils.isEmpty(path)) {
             File file = new File(path);
             Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
             mediaScanIntent.setData(Uri.fromFile(file));
@@ -80,7 +80,7 @@ public class LoggedInUserRepository {
      */
     public Uri loadSelfPortraitFromGallery(@NonNull LoggedInUser loggedInUser) {
         String path = loggedInUser.getSelfPortraitPath();
-        if(path == null) {
+        if (path == null) {
             return null;
         } else {
             return Uri.fromFile(new File(path));

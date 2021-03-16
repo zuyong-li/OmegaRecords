@@ -34,7 +34,7 @@ public class UserViewModel extends AndroidViewModel {
         return users;
     }
 
-    public boolean shouldSaveDataToDatabase(){
+    public boolean shouldSaveDataToDatabase() {
         return repository.isEmpty(userDatabase);
     }
 }

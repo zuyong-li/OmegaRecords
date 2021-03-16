@@ -12,7 +12,7 @@ public class SettingsRepository {
     private SharedPreferences sharedPreferences;
 
     public SharedPreferences createSharedPreferences(@NonNull Context context) {
-        if(sharedPreferences == null) {
+        if (sharedPreferences == null) {
             sharedPreferences = context.getSharedPreferences(
                     context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         }
@@ -31,7 +31,7 @@ public class SettingsRepository {
     /**
      * save the background music setting isMusicOn to the shared preferences
      */
-    public void saveBackgroundMusicSetting(@NonNull  Context context, boolean isMusicOn) {
+    public void saveBackgroundMusicSetting(@NonNull Context context, boolean isMusicOn) {
         createSharedPreferences(context).edit()
                 .putBoolean(context.getString(R.string.preference_file_bkgndmusic_key), isMusicOn)
                 .apply();

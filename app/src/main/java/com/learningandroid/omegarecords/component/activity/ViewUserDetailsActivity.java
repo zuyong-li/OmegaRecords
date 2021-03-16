@@ -54,9 +54,9 @@ public class ViewUserDetailsActivity extends NavigationPane
      * fetch the user data which is passed along as a Json string in the extra
      */
     private void fetchData() {
-        if(getIntent().hasExtra("user_details")) {
+        if (getIntent().hasExtra("user_details")) {
             user = GsonProvider.getInstance().fromJson(getIntent().getStringExtra("user_details"), User.class);
-        } else if(getIntent().hasExtra("logged_in_user_details")){
+        } else if (getIntent().hasExtra("logged_in_user_details")) {
             user = GsonProvider.getInstance().fromJson(getIntent().getStringExtra("logged_in_user_details"), LoggedInUser.class);
         }
     }
@@ -121,12 +121,12 @@ public class ViewUserDetailsActivity extends NavigationPane
      */
     private LatLng getLocation() {
         double lat = 38.578874, lng = -121.502319;
-        if(user != null && user.getAddress() != null && user.getAddress().getGeo() != null) {
+        if (user != null && user.getAddress() != null && user.getAddress().getGeo() != null) {
             Geography geo = user.getAddress().getGeo();
-            if(!TextUtils.isEmpty(geo.getLat())) {
+            if (!TextUtils.isEmpty(geo.getLat())) {
                 lat = Double.parseDouble(geo.getLat());
             }
-            if(!TextUtils.isEmpty(geo.getLng())) {
+            if (!TextUtils.isEmpty(geo.getLng())) {
                 lng = Double.parseDouble(geo.getLng());
             }
         }

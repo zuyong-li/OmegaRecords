@@ -26,12 +26,12 @@ public class ImageUtils {
      */
 
     public static void setUserImage(ImageView imageView, User user, ImageViewModel imageViewModel,
-                                LoggedInUserViewModel loggedInUserViewModel) {
+                                    LoggedInUserViewModel loggedInUserViewModel) {
         Uri selfPortrait = null;
-        if(user instanceof  LoggedInUser) {
+        if (user instanceof LoggedInUser) {
             selfPortrait = loggedInUserViewModel.loadSelfPortrait((LoggedInUser) user);
         }
-        if(selfPortrait != null) {
+        if (selfPortrait != null) {
             imageView.setImageURI(selfPortrait);
         } else {
             setImageHelper(imageView, USER_URL + user.getName(), imageViewModel);
@@ -53,7 +53,7 @@ public class ImageUtils {
      */
     private static void setImageHelper(ImageView imageView, String key, ImageViewModel imageViewModel) {
         Bitmap bitmap = imageViewModel.getBitmapFromMemCache(key);
-        if(bitmap != null) {
+        if (bitmap != null) {
             Log.i(TAG, "load image from memory cache");
             imageView.setImageBitmap(bitmap);
         } else {

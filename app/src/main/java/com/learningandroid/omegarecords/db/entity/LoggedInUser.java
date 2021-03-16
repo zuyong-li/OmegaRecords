@@ -1,6 +1,6 @@
 package com.learningandroid.omegarecords.db.entity;
 
-public class LoggedInUser extends User{
+public class LoggedInUser extends User {
     String selfPortraitPath;
 
     public String getSelfPortraitPath() {

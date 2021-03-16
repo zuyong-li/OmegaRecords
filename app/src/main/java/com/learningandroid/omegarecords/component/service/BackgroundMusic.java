@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.os.IBinder;
 
 import androidx.annotation.Nullable;
+
 import com.learningandroid.omegarecords.R;
 
 /**
@@ -17,7 +18,8 @@ public class BackgroundMusic extends Service {
 
     public static MediaPlayer mediaPlayer;
 
-    public BackgroundMusic() {}
+    public BackgroundMusic() {
+    }
 
     @Override
     public void onCreate() {

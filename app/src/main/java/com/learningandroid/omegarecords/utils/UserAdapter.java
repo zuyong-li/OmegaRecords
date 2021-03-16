@@ -20,7 +20,6 @@ import com.learningandroid.omegarecords.viewmodel.ImageViewModel;
 import com.learningandroid.omegarecords.viewmodel.LoggedInUserViewModel;
 
 
-
 import java.util.ArrayList;
 
 /**
@@ -77,7 +76,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
                 Intent viewUserDetailsIntent = new Intent(context, ViewUserDetailsActivity.class);
 
                 User user = users.get(getAdapterPosition());
-                if(user instanceof LoggedInUser){
+                if (user instanceof LoggedInUser) {
                     viewUserDetailsIntent.putExtra("logged_in_user_details", GsonProvider.getInstance().toJson(user));
                 } else {
                     viewUserDetailsIntent.putExtra("user_details", GsonProvider.getInstance().toJson(user));

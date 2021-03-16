@@ -43,7 +43,7 @@ public class TimerService extends Service {
         int hours = (time % 86400) / 3600;
         int minutes = ((time % 86400) % 3600) / 60;
         int seconds = ((time % 86400) % 3600) % 60;
-        return String.format("%02d:%02d:%02d",hours, minutes, seconds);
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
     @Override
@@ -69,11 +69,12 @@ public class TimerService extends Service {
 
     @Override
     public void onDestroy() {
-        if(timer != null) {
+        if (timer != null) {
             timer.cancel();
             timer = null;
         }
         timerTask = null;
         stopForeground(true);
+        super.onDestroy();
     }
 }

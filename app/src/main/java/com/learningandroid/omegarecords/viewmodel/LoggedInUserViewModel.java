@@ -35,6 +35,7 @@ public class LoggedInUserViewModel extends AndroidViewModel {
     public void saveSelfPortrait(@NonNull LoggedInUser loggedInUser) {
         repository.saveSelfPortraitToGallery(application, loggedInUser);
     }
+
     public Uri loadSelfPortrait(@NonNull LoggedInUser loggedInUser) {
         return repository.loadSelfPortraitFromGallery(loggedInUser);
     }

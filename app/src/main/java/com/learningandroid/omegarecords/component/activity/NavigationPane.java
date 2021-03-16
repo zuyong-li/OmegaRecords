@@ -84,7 +84,7 @@ public class NavigationPane extends AppCompatActivity {
         actionBarDrawerToggle.syncState();
 
         // set up the name and email fields in the header
-        if(account != null) {
+        if (account != null) {
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.header_name))
                     .setText(account.getDisplayName());
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.header_email))
@@ -96,7 +96,7 @@ public class NavigationPane extends AppCompatActivity {
             menuItem.setChecked(true);
             drawerLayout.closeDrawers();
 
-            switch(menuItem.getItemId()) {
+            switch (menuItem.getItemId()) {
                 case R.id.app_info:
                     Intent infoIntent = new Intent(this, AppInfoActivity.class);
                     startActivity(infoIntent);
@@ -155,7 +155,7 @@ public class NavigationPane extends AppCompatActivity {
      * if there is no saved data, create an new LoggedInUser Object with only name and email
      */
     public LoggedInUser loadLoggedInUser() {
-        if(account != null) {
+        if (account != null) {
             LoggedInUser loggedInUser = new LoggedInUser();
             loggedInUser.setName(account.getDisplayName());
             loggedInUser.setEmail(account.getEmail());
@@ -171,15 +171,15 @@ public class NavigationPane extends AppCompatActivity {
      * permission: the name of the permission to request
      */
     protected void requestPermission(String message, @NonNull String permission, final int request_code) {
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             new AlertDialog.Builder(this)
                     .setMessage(message)
                     .setPositiveButton("Allow", (dialog, which) ->
-                            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code))
+                            ActivityCompat.requestPermissions(this, new String[]{permission}, request_code))
                     .setNegativeButton("Dismiss", (dialog, which) -> dialog.dismiss())
                     .create().show();
         } else {
-            ActivityCompat.requestPermissions(this, new String[] {permission}, request_code);
+            ActivityCompat.requestPermissions(this, new String[]{permission}, request_code);
         }
     }
 

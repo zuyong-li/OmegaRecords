@@ -94,14 +94,14 @@ public class EditProfileActivity extends NavigationPane {
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 List<Location> locations = locationResult.getLocations();
                 Location location = locations.size() > 0 ? locations.get(0) : null;
-                if(location != null) {
+                if (location != null) {
                     updateAddressInfo(location);
                     stopLocationUpdates();
                 }
             }
         };
 
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             loggedInUser = loadLoggedInUser();
         } else {
             loggedInUser = GsonProvider.getInstance().fromJson(savedInstanceState.getString(USER_KEY), LoggedInUser.class);
@@ -125,7 +125,7 @@ public class EditProfileActivity extends NavigationPane {
 
         // click the address image to allow using current location
         findViewById(R.id.profile_address_photo).setOnClickListener((View view) -> {
-            if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
+            if (ContextCompat.checkSelfPermission(EditProfileActivity.this,
                     Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermission("Allow location access to auto fill or update address information",
                         Manifest.permission.ACCESS_FINE_LOCATION, LOCATION_PERMISSION_CODE);
@@ -139,7 +139,7 @@ public class EditProfileActivity extends NavigationPane {
      * set the profile image by starting camera activity with runtime permission request
      */
     private void setProfileImageFromCamera() {
-        if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
+        if (ContextCompat.checkSelfPermission(EditProfileActivity.this,
                 Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestPermission("Allow camera access to take a profile photo",
                     Manifest.permission.CAMERA, CAMERA_PERMISSION_CODE);
@@ -152,7 +152,7 @@ public class EditProfileActivity extends NavigationPane {
      * set the profile image by picking from gallery with runtime permission request
      */
     private void setProfileImageFromGallery() {
-        if(ContextCompat.checkSelfPermission(EditProfileActivity.this,
+        if (ContextCompat.checkSelfPermission(EditProfileActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermission("Allow gallery access to choose profile photo",
                     Manifest.permission.READ_EXTERNAL_STORAGE, IMAGE_PERMISSION_CODE);
@@ -187,7 +187,7 @@ public class EditProfileActivity extends NavigationPane {
         setDataHelper(R.id.profile_user_website, loggedInUser.getWebsite());
 
         Address addr = loggedInUser.getAddress();
-        if(addr != null) {
+        if (addr != null) {
             setDataHelper(R.id.profile_address_street, addr.getStreet());
             setDataHelper(R.id.profile_address_suite, addr.getSuite());
             setDataHelper(R.id.profile_address_city, addr.getCity());
@@ -201,14 +201,14 @@ public class EditProfileActivity extends NavigationPane {
         }
 
         Company company = loggedInUser.getCompany();
-        if(company != null) {
+        if (company != null) {
             setDataHelper(R.id.profile_com_name, company.getName());
             setDataHelper(R.id.profile_com_catch_phrase, company.getCatchPhrase());
             setDataHelper(R.id.profile_com_business, company.getBs());
         }
 
         Uri selfPortrait = loggedInUserViewModel.loadSelfPortrait(loggedInUser);
-        if(selfPortrait != null) {
+        if (selfPortrait != null) {
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(selfPortrait);
         }
     }
@@ -247,8 +247,8 @@ public class EditProfileActivity extends NavigationPane {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         // if camera permission is granted, start a camera intent to set up profile image
-        if(requestCode == CAMERA_PERMISSION_CODE) {
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == CAMERA_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
                 dispatchTakePictureIntent();
             } else {
@@ -257,8 +257,8 @@ public class EditProfileActivity extends NavigationPane {
         }
 
         // if location permission is granted, auto fill the address info
-        if(requestCode == LOCATION_PERMISSION_CODE) {
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == LOCATION_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Location Permission Granted", Toast.LENGTH_SHORT).show();
                 checkSettingsAndUpdateAddressInfo();
             } else {
@@ -267,8 +267,8 @@ public class EditProfileActivity extends NavigationPane {
         }
 
         // if read external storage permission is granted, set profile image by picking from gallery
-        if(requestCode == IMAGE_PERMISSION_CODE) {
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == IMAGE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(this, "Gallery Permission Denied", Toast.LENGTH_SHORT).show();
                 pickImageFromGallery();
             } else {
@@ -287,7 +287,7 @@ public class EditProfileActivity extends NavigationPane {
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
-        File image = File.createTempFile(imageFileName,".jpg", storageDir);
+        File image = File.createTempFile(imageFileName, ".jpg", storageDir);
         loggedInUser.setSelfPortraitPath(image.getAbsolutePath());
         return image;
     }
@@ -326,7 +326,7 @@ public class EditProfileActivity extends NavigationPane {
         super.onActivityResult(requestCode, resultCode, data);
         // if taking selfPortrait using camera is successful
         // save the image to gallery and set the imageView of profile user photo
-        if(requestCode == CAMERA_INTENT_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == CAMERA_INTENT_CODE && resultCode == Activity.RESULT_OK) {
             Log.i(TAG, "image picked from camera");
             loggedInUserViewModel.saveSelfPortrait(loggedInUser);
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(loggedInUserViewModel.loadSelfPortrait(loggedInUser));
@@ -334,7 +334,7 @@ public class EditProfileActivity extends NavigationPane {
 
         // if picking selfPortrait from gallery is successful
         // set the real path of the image as the selfPortraitPath of the logged in user
-        if(requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK && data != null) {
+        if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK && data != null) {
             Log.i(TAG, "image picked from gallery");
             loggedInUser.setSelfPortraitPath(loggedInUserViewModel.getFilePathFromUri(data.getData()));
             ((ImageView) findViewById(R.id.profile_user_photo)).setImageURI(loggedInUserViewModel.loadSelfPortrait(loggedInUser));
@@ -377,7 +377,7 @@ public class EditProfileActivity extends NavigationPane {
         Task<LocationSettingsResponse> locationSettingsResponseTask = settingsClient.checkLocationSettings(locationSettingsRequest);
         locationSettingsResponseTask.addOnSuccessListener(locationSettingsResponse -> startLocationUpdates());
         locationSettingsResponseTask.addOnFailureListener(e -> {
-            if(e instanceof ResolvableApiException) {
+            if (e instanceof ResolvableApiException) {
                 ResolvableApiException resolvableApiException = (ResolvableApiException) e;
                 try {
                     resolvableApiException.startResolutionForResult(EditProfileActivity.this, 1000);

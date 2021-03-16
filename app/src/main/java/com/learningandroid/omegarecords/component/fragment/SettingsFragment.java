@@ -37,7 +37,7 @@ public class SettingsFragment extends Fragment {
         aSwitch.setChecked(settingsViewModel.loadBackgroundMusicSetting());
         aSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             Intent backgroundMusicIntent = new Intent(getContext(), BackgroundMusic.class);
-            if(isChecked) {
+            if (isChecked) {
                 requireActivity().startService(backgroundMusicIntent);
                 settingsViewModel.saveBackgroundMusicSetting(true);
                 Log.i(TAG, "start background music");
@@ -50,9 +50,9 @@ public class SettingsFragment extends Fragment {
 
         // remove the setting fragment when OK button is clicked
         Button applySettings = view.findViewById(R.id.setting_applay);
-        applySettings.setOnClickListener((View v) ->{
+        applySettings.setOnClickListener((View v) -> {
             Fragment fragment = requireActivity().getSupportFragmentManager().findFragmentById(R.id.setting_fragment_container);
-            if(fragment != null) {
+            if (fragment != null) {
                 Log.i(TAG, "apply settings and remove the setting fragment");
                 requireActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
             }

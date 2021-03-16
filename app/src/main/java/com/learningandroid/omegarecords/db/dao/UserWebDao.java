@@ -29,7 +29,7 @@ public class UserWebDao {
     private static UserWebDao userWebDao;
 
     public static UserWebDao getInstance() {
-        if(userWebDao == null) {
+        if (userWebDao == null) {
             userWebDao = new UserWebDao();
         }
         return userWebDao;
@@ -45,10 +45,11 @@ public class UserWebDao {
             @Override
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 User[] users = GsonProvider.getInstance().fromJson(Objects.requireNonNull(response.body()).string(), User[].class);
-                if(response.isSuccessful()) {
+                if (response.isSuccessful()) {
                     result.postValue(Arrays.asList(users));
                 }
             }
+
             @Override
             public void onFailure(@NotNull Call call, @NotNull IOException e) {
                 Log.d(TAG, "failed to execute request of fetch users from url");
