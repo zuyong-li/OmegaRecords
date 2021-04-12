@@ -6,8 +6,8 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.learningandroid.omegarecords.db.entity.LoggedInUser;
-import com.learningandroid.omegarecords.db.entity.User;
+import com.learningandroid.omegarecords.storage.entity.LoggedInUser;
+import com.learningandroid.omegarecords.storage.entity.User;
 import com.learningandroid.omegarecords.viewmodel.ImageViewModel;
 import com.learningandroid.omegarecords.viewmodel.LoggedInUserViewModel;
 import com.squareup.picasso.Picasso;

@@ -13,8 +13,8 @@
         android:required="true" />
 
     <application
-        android:allowBackup="false"
         android:name=".OmegaRecordsApp"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -28,30 +28,36 @@
 
         <service
             android:name=".component.service.BackgroundMusic"
-            android:enabled="true" />
+            android:enabled="true"
+            android:stopWithTask="true" />
         <service
             android:name=".component.service.TimerService"
-            android:enabled="true" />
+            android:enabled="true"
+            android:stopWithTask="true" />
 
         <activity
+            android:name=".component.activity.SettingsActivity"
+            android:label="@string/label_activity_settings" />
+        <activity
             android:name=".component.activity.AppInfoActivity"
-            android:label="@string/app_info" />
+            android:label="@string/label_activity_appInfo" />
         <activity
             android:name=".component.activity.EditProfileActivity"
-            android:label="@string/edit_profile_label" />
+            android:label="@string/label_activity_editProfile" />
         <activity
             android:name=".component.activity.ViewUserDetailsActivity"
-            android:label="@string/view_user_details_label"
+            android:label="@string/label_activity_userDetails"
             android:parentActivityName=".component.activity.ViewUsersActivity" />
         <activity
             android:name=".component.activity.ViewUsersActivity"
-            android:label="@string/view_user_label" />
+            android:label="@string/label_activity_userList" />
+
         <activity android:name=".component.activity.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

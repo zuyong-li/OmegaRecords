@@ -9,6 +9,6 @@
     android:layout_gravity="start"
     android:fitsSystemWindows="true"
     app:headerLayout="@layout/header"
-    app:menu="@menu/drawermenu"
+    app:menu="@menu/drawer_menu"
     tools:context=".component.activity.NavigationPane" />
 

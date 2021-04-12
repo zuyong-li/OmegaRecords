@@ -14,13 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.learningandroid.omegarecords.R;
 import com.learningandroid.omegarecords.component.activity.ViewUserDetailsActivity;
-import com.learningandroid.omegarecords.db.entity.LoggedInUser;
-import com.learningandroid.omegarecords.db.entity.User;
+import com.learningandroid.omegarecords.storage.entity.LoggedInUser;
+import com.learningandroid.omegarecords.storage.entity.User;
 import com.learningandroid.omegarecords.viewmodel.ImageViewModel;
 import com.learningandroid.omegarecords.viewmodel.LoggedInUserViewModel;
 
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * user adapter for fill recycler view with users list and loggedInUser
@@ -28,16 +29,26 @@ import java.util.ArrayList;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
 
     Context context;
-    ArrayList<User> users;
+    List<User> users;
     ImageViewModel imageViewModel;
     LoggedInUserViewModel loggedInUserViewModel;
 
-    public UserAdapter(Context context, ArrayList<User> users, ImageViewModel imageViewModel,
+    public UserAdapter(Context context, List<User> users, ImageViewModel imageViewModel,
                        LoggedInUserViewModel loggedInUserViewModel) {
         this.context = context;
         this.users = users;
         this.imageViewModel = imageViewModel;
         this.loggedInUserViewModel = loggedInUserViewModel;
+    }
+
+    public void setUsers(List<User> newUserList) {
+        newUserList.add(0, users.get(0));
+        users = newUserList;
+        notifyDataSetChanged();
+    }
+
+    public User userAt(int position) {
+        return users.get(position);
     }
 
     @NonNull

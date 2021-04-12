@@ -1,29 +1,33 @@
 package com.learningandroid.omegarecords.component.activity;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.db.UserDatabase;
-import com.learningandroid.omegarecords.db.entity.*;
+import com.learningandroid.omegarecords.storage.UserDatabase;
+import com.learningandroid.omegarecords.storage.entity.*;
 import com.learningandroid.omegarecords.utils.UserAdapter;
 import com.learningandroid.omegarecords.viewmodel.ImageViewModel;
 import com.learningandroid.omegarecords.viewmodel.UserViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * this activity displays a RecycerView of USERS array and the logged in user
- * if the Cardivew is clicked, redirect to the corresponding user details
+ * if the view holder is clicked, redirect to the corresponding user details
+ * if the view holder is swiped to left or right, the corresponding user is removed from RoomDatabase
  */
 public class ViewUsersActivity extends NavigationPane {
 
     UserAdapter userAdapter;
-    ArrayList<User> userList = new ArrayList<>();
+    List<User> userList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +40,7 @@ public class ViewUsersActivity extends NavigationPane {
     }
 
     /**
-     * setup the userAdapter, initially contains only the loggedInUser
-     * then data is fetched from the local database,
-     * if the local database is empty, fetch data from the website
-     * if data is fetched from website, save it to local database
+     * setup the userAdapter, item touch helper for the recyclerview
      */
     private void setData() {
         loggedInUser = loadLoggedInUser();
@@ -52,12 +53,22 @@ public class ViewUsersActivity extends NavigationPane {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         UserViewModel userViewModel = new ViewModelProvider(this).get(UserViewModel.class);
-        userViewModel.getUsers().observe(this, users -> {
-            userList.addAll(users);
-            userAdapter.notifyDataSetChanged();
-            if (userViewModel.shouldSaveDataToDatabase()) {
-                UserDatabase.getInstance(this).userRoomDao().insertUsers(users);
+        userViewModel.getUsers().observe(this, users -> userAdapter.setUsers(users));
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                User user = userAdapter.userAt(position);
+                userViewModel.deleteUser(user);
             }
         });
+        itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 }

@@ -5,7 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.os.Build;
 
-import com.learningandroid.omegarecords.db.UserDatabase;
+import com.learningandroid.omegarecords.storage.UserDatabase;
 
 /**
  * it is a singleton class with the following functionality

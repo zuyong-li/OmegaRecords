@@ -6,10 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.learningandroid.omegarecords.OmegaRecordsApp;
-import com.learningandroid.omegarecords.db.UserDatabase;
-import com.learningandroid.omegarecords.db.entity.User;
-import com.learningandroid.omegarecords.viewmodel.repository.UserRepository;
+import com.learningandroid.omegarecords.storage.entity.User;
+import com.learningandroid.omegarecords.storage.repository.UserRepository;
 
 import java.util.List;
 
@@ -20,21 +18,28 @@ public class UserViewModel extends AndroidViewModel {
 
     private final LiveData<List<User>> users;
     private final UserRepository repository;
-    private final UserDatabase userDatabase;
+
 
     public UserViewModel(@NonNull Application application) {
         super(application);
 
-        repository = UserRepository.getInstance();
-        userDatabase = ((OmegaRecordsApp) application).getUserDatabase();
-        users = repository.getUsers(userDatabase);
+        repository = new UserRepository(application);
+        users = repository.getAllUsers();
     }
 
     public LiveData<List<User>> getUsers() {
         return users;
     }
 
-    public boolean shouldSaveDataToDatabase() {
-        return repository.isEmpty(userDatabase);
+    public void deleteUser(User user) {
+        repository.deleteUser(user);
+    }
+
+    public void deleteAllUsers() {
+        repository.deleteAllUsers();
+    }
+
+    public void insertUsers(User[] users) {
+        repository.insertUsers(users);
     }
 }

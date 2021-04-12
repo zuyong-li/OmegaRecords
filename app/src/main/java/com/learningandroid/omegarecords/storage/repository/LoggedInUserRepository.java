@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.viewmodel.repository;
+package com.learningandroid.omegarecords.storage.repository;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.learningandroid.omegarecords.db.entity.LoggedInUser;
+import com.learningandroid.omegarecords.storage.entity.LoggedInUser;
 import com.learningandroid.omegarecords.utils.GsonProvider;
 
 import java.io.BufferedReader;

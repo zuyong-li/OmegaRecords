@@ -6,8 +6,8 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
-import com.learningandroid.omegarecords.viewmodel.repository.LoggedInUserRepository;
-import com.learningandroid.omegarecords.db.entity.LoggedInUser;
+import com.learningandroid.omegarecords.storage.repository.LoggedInUserRepository;
+import com.learningandroid.omegarecords.storage.entity.LoggedInUser;
 
 
 /**

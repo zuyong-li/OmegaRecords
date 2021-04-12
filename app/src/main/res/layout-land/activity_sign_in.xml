@@ -11,37 +11,38 @@
 
     <ImageView
         android:id="@+id/sign_in_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="180dp"
-        android:layout_marginTop="100dp"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_marginStart="40dp"
         android:src="@drawable/logo"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
 
+
     <TextView
         android:id="@+id/sign_in_app_name"
         style="@style/SignInText"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="50dp"
         android:text="@string/app_name"
         android:textColor="#F44336"
-        android:textSize="32sp"
+        android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_logo" />
+        app:layout_constraintStart_toEndOf="@+id/sign_in_logo"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/sign_in_status"
         style="@style/SignInText"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="30dp"
         android:text="@string/sign_in_status"
-        android:textSize="18sp"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sign_in_logo"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_app_name" />
-
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -49,10 +50,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="80dp"
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sign_in_logo"
         app:layout_constraintTop_toBottomOf="@+id/sign_in_status" />
 
 

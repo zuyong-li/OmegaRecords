@@ -1,15 +1,5 @@
 package com.learningandroid.omegarecords.component.activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -20,16 +10,24 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.navigation.NavigationView;
 import com.learningandroid.omegarecords.OmegaRecordsApp;
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.db.entity.LoggedInUser;
-import com.learningandroid.omegarecords.component.fragment.SettingsFragment;
 import com.learningandroid.omegarecords.component.receiver.AirplaneModeReceiver;
+import com.learningandroid.omegarecords.storage.entity.LoggedInUser;
 import com.learningandroid.omegarecords.viewmodel.LoggedInUserViewModel;
-
 
 import java.util.Objects;
 
@@ -44,7 +42,7 @@ public class NavigationPane extends AppCompatActivity {
     public static final int IMAGE_PERMISSION_CODE = 202;
     public static final int IMAGE_PICK_CODE = 203;
     public static final int LOCATION_PERMISSION_CODE = 204;
-    private static final String TAG = "NAVIGATION PANE";
+    private static final String TAG = NavigationPane.class.getSimpleName();
 
     GoogleSignInAccount account;
     ActionBarDrawerToggle actionBarDrawerToggle;
@@ -110,9 +108,8 @@ public class NavigationPane extends AppCompatActivity {
                     startActivity(viewUsersIntent);
                     break;
                 case R.id.settings:
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.setting_fragment_container, new SettingsFragment(), null)
-                            .commit();
+                    Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                    startActivity(settingsIntent);
                     break;
                 case R.id.logout:
                     Intent signOutIntent = new Intent(this, SignInActivity.class);

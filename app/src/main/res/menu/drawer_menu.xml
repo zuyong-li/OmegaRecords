@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/app_info"
-        android:title="@string/app_info" />
+        android:title="@string/label_activity_appInfo" />
     <item
         android:id="@+id/edit_profile"
-        android:title="@string/edit_profile_label" />
+        android:title="@string/label_activity_editProfile" />
     <item
         android:id="@+id/view_users"
-        android:title="@string/view_user_label" />
+        android:title="@string/label_activity_userList" />
     <item
         android:id="@+id/settings"
-        android:title="@string/setting" />
+        android:title="@string/label_activity_settings" />
     <item
         android:id="@+id/logout"
-        android:title="@string/log_out" />
+        android:title="@string/label_signOut" />
 </menu>

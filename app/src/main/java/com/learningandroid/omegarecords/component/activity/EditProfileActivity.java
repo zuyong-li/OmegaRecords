@@ -37,10 +37,10 @@ import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.db.entity.Address;
-import com.learningandroid.omegarecords.db.entity.Company;
-import com.learningandroid.omegarecords.db.entity.Geography;
-import com.learningandroid.omegarecords.db.entity.LoggedInUser;
+import com.learningandroid.omegarecords.storage.entity.Address;
+import com.learningandroid.omegarecords.storage.entity.Company;
+import com.learningandroid.omegarecords.storage.entity.Geography;
+import com.learningandroid.omegarecords.storage.entity.LoggedInUser;
 import com.learningandroid.omegarecords.utils.GsonProvider;
 
 import java.io.File;
@@ -58,7 +58,7 @@ import java.util.Locale;
 public class EditProfileActivity extends NavigationPane {
 
     private static final String USER_KEY = "loggedInUser";
-    private static final String TAG = "EDIT PROFILE";
+    private static final String TAG = EditProfileActivity.class.getSimpleName();
 
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;

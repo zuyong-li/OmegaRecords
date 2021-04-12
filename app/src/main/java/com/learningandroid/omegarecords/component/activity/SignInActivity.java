@@ -3,13 +3,14 @@ package com.learningandroid.omegarecords.component.activity;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.PreferenceManager;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -26,11 +27,9 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.learningandroid.omegarecords.OmegaRecordsApp;
 import com.learningandroid.omegarecords.R;
-import com.learningandroid.omegarecords.db.UserDatabase;
 import com.learningandroid.omegarecords.component.receiver.NotificationReceiver;
 import com.learningandroid.omegarecords.component.service.BackgroundMusic;
 import com.learningandroid.omegarecords.component.service.TimerService;
-import com.learningandroid.omegarecords.viewmodel.SettingsViewModel;
 
 /**
  * SignInActivity allows end users to sign in this app using their Gmail accounts
@@ -39,7 +38,7 @@ import com.learningandroid.omegarecords.viewmodel.SettingsViewModel;
  */
 public class SignInActivity extends AppCompatActivity {
 
-    private static final String TAG = "SIGN IN";
+    private static final String TAG = SignInActivity.class.getSimpleName();
     private static final int SIGN_IN = 300;
     GoogleSignInClient googleSignInClient;
 
@@ -56,7 +55,6 @@ public class SignInActivity extends AppCompatActivity {
         // if this intent is accompanied with message sign out,
         // stop background music, then sign out current account
         // it cancels the repeating notifications and timer
-        // it removes all the notifications and clear local database
         if (getIntent().hasExtra("sign_out")) {
             Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
             stopService(backgroundMusicIntent);
@@ -68,7 +66,6 @@ public class SignInActivity extends AppCompatActivity {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(OmegaRecordsApp.REVISIT_NOTIFY_ID);
             manager.cancel(OmegaRecordsApp.ALARM_NOTIFY_ID);
-            UserDatabase.getInstance(this).clearAllTables();
         }
 
         SignInButton signInButton = findViewById(R.id.sign_in_button);
@@ -129,8 +126,8 @@ public class SignInActivity extends AppCompatActivity {
      */
     private void updateUI(GoogleSignInAccount account) {
         if (account != null) {
-            SettingsViewModel settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
-            if (settingsViewModel.loadBackgroundMusicSetting()) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            if (sharedPreferences.getBoolean(getString(R.string.preference_background_music), false)) {
                 Intent backgroundMusicIntent = new Intent(this, BackgroundMusic.class);
                 startService(backgroundMusicIntent);
             }

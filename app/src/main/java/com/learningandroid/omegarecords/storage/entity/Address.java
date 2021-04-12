@@ -1,4 +1,4 @@
-package com.learningandroid.omegarecords.db.entity;
+package com.learningandroid.omegarecords.storage.entity;
 
 import androidx.room.Embedded;
 import androidx.room.Ignore;
